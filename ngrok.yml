@@ -1,0 +1,14 @@
+version: "2"
+authtoken: 
+
+tunnels:
+  first:
+    addr: 3000
+    proto: http
+    hostname: 
+  second:
+    addr: 5000
+    proto: http
+  third:
+    addr: 9090
+    proto: http
