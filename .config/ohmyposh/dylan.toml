@@ -40,17 +40,26 @@ console_title_template = '{{ .Shell }} in {{ .Folder }}'
     style = 'plain'
     foreground = 'lightYellow'
     background = 'transparent'
-    tempalte = "  {{ .Full }} "
+    template = '  {{ .Full }} '
 
   [[blocks.segments]]
     type = 'executiontime'
     style = 'plain'
     foreground = 'lightCyan'
     background = 'transparent'
-    template = '{{ .FormattedMs }}'
+    template = '{{ .FormattedMs }} '
 
     [blocks.segments.properties]
       threshold = 5000
+
+  [[blocks.segments]]
+    type = "session"
+    style = "diamond"
+    foreground = "lightWhite"
+    background = "darkGray"
+    leading_diamond = ""
+    trailing_diamond = ""
+    template = "{{ if .SSHSession }} {{ .UserName }}@{{ .HostName }}{{ end }}"
 
 [[blocks]]
   type = 'prompt'
