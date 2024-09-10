@@ -33,11 +33,11 @@ zinit cdreplay -q
 ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#ff00ff,bg=cyan,bold,underline"
 
 # Export PATHs
-export PATH="$PATH:/home/definevera/.local/bin"
-export PATH="$PATH:/home/definevera/.dotnet/tools"
-export PATH="$PATH:/home/definevera/Document/C4G/birdwatcher"
+export PATH="$PATH:/home/$USER/.local/bin"
+export PATH="$PATH:/home/$USER/.dotnet/tools"
+export PATH="$PATH:/home/$USER/Document/C4G/birdwatcher"
 export PATH="$PATH:/opt/nvim-linux64/bin"
-export PATH="$PATH:/home/definevera/Documents/Dylan/llama.cpp"
+export PATH="$PATH:/home/$USER/Documents/Dylan/llama.cpp"
 export PATH="$PATH:/usr/local/cuda/bin"
 export PATH="$PATH:/usr/local/go/bin"
 
@@ -91,8 +91,9 @@ alias adg='sudo apt update && sudo apt upgrade'
 alias icat='kitten icat'
 
 # SSH Aliases
-alias rnd='s -L 8080:localhost:8000 dylan@10.32.10.178'
-alias main='s chat4good@10.32.45.55'
+alias rnd-dylan='s -L 8080:localhost:8000 dylan@10.32.10.178'
+alias rnd-user='s user@10.32.10.178'
+alias prod='s chat4good@10.32.45.55'
 
 # Shell integrations
 eval "$(fzf --zsh)"
