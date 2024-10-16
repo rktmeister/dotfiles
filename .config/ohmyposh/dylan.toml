@@ -40,7 +40,7 @@ console_title_template = '{{ .Shell }} in {{ .Folder }}'
     style = 'plain'
     foreground = 'lightYellow'
     background = 'transparent'
-    template = '  {{ .Full }} '
+    template = '  {{ .Venv }} {{ .Full }} '
 
   [[blocks.segments]]
     type = 'executiontime'

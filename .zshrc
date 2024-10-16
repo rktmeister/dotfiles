@@ -1,4 +1,4 @@
-# .zshrc config file for DefiNevera
+# .zshrc config file for Nevera
 
 # zinit config
 ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
@@ -8,6 +8,23 @@ if [ ! -d "$ZINIT_HOME" ]; then
   mkdir -p "$(dirname $ZINIT_HOME)"
   git clone https://github.com/zdharma-continuum/zinit.git "$ZINIT_HOME"
 fi
+
+ssh_connect() {
+  local server=$1
+  shift
+  local forward_args=()
+  
+  while (( $# > 0 )); do
+      forward_args+=("-L" "$1:127.0.0.1:$1")
+      shift
+  done
+  
+  if (( ${#forward_args[@]} > 0 )); then
+      s "${forward_args[@]}" "$server"
+  else
+      s "$server"
+  fi
+}
 
 source "${ZINIT_HOME}/zinit.zsh"
 
@@ -33,6 +50,7 @@ zinit cdreplay -q
 ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#ff00ff,bg=cyan,bold,underline"
 
 # Export PATHs
+export PATH="$PATH:/home/definevera/.pixi/bin"
 export PATH="$PATH:/home/$USER/.local/bin"
 export PATH="$PATH:/home/$USER/.dotnet/tools"
 export PATH="$PATH:/home/$USER/Document/C4G/birdwatcher"
@@ -40,6 +58,9 @@ export PATH="$PATH:/opt/nvim-linux64/bin"
 export PATH="$PATH:/home/$USER/Documents/Dylan/llama.cpp"
 export PATH="$PATH:/usr/local/cuda/bin"
 export PATH="$PATH:/usr/local/go/bin"
+## bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
 
 # Export external PATHs
 export NVM_DIR="$HOME/.nvm"
@@ -91,18 +112,41 @@ alias adg='sudo apt update && sudo apt upgrade'
 alias icat='kitten icat'
 
 # SSH Aliases
-alias rnd-dylan='s -L 8080:localhost:8000 dylan@10.32.10.178'
-alias rnd-user='s user@10.32.10.178'
-alias prod='s chat4good@10.32.45.55'
+## Port Forwarding (-L <local_port>:localhost:<remote_port>)
+## Debug (-v)
+alias rnd-dylan='ssh_connect dylan@10.32.10.178' 
+alias rnd-user='ssh_connect user@10.32.10.178'
+alias prod='ssh_connect chat4good@10.32.45.55'
 
 # Shell integrations
 eval "$(fzf --zsh)"
 eval "$(zoxide init --cmd cd zsh)"
 
-export PYENV_ROOT="$HOME/.pyenv"
-[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init -)"
+GPG_TTY=$(tty)
+export GPG_TTY
+
+# pyenv
+# export PYENV_ROOT="$HOME/.pyenv"
+# [[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
+# eval "$(pyenv init -)"
 
 # nvm
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+# pixi
+eval "$(pixi completion --shell zsh)"
+
+# deno
+. "/home/definevera/.deno/env"
+
+# pnpm
+export PNPM_HOME="/home/definevera/.local/share/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+# pnpm end
+
+# bun completions
+[ -s "/home/definevera/.bun/_bun" ] && source "/home/definevera/.bun/_bun"

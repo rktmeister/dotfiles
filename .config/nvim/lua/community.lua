@@ -8,5 +8,7 @@ return {
   { import = "astrocommunity.pack.lua" },
   { import = "astrocommunity.colorscheme.catppuccin" },
   { import = "astrocommunity.terminal-integration.vim-tmux-yank" },
+  { import = "astrocommunity.code-runner.molten-nvim" },
+  { import = "astrocommunity.markdown-and-latex.render-markdown-nvim" },
   -- import/override with your plugins folder
 }
