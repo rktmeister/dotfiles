@@ -9,23 +9,6 @@ if [ ! -d "$ZINIT_HOME" ]; then
   git clone https://github.com/zdharma-continuum/zinit.git "$ZINIT_HOME"
 fi
 
-ssh_connect() {
-  local server=$1
-  shift
-  local forward_args=()
-  
-  while (( $# > 0 )); do
-      forward_args+=("-L" "$1:127.0.0.1:$1")
-      shift
-  done
-  
-  if (( ${#forward_args[@]} > 0 )); then
-      s "${forward_args[@]}" "$server"
-  else
-      s "$server"
-  fi
-}
-
 source "${ZINIT_HOME}/zinit.zsh"
 
 # zsh plugins
@@ -150,3 +133,21 @@ esac
 
 # bun completions
 [ -s "/home/definevera/.bun/_bun" ] && source "/home/definevera/.bun/_bun"
+
+# ssh QOL
+ssh_connect() {
+  local server=$1
+  shift
+  local forward_args=()
+  
+  while (( $# > 0 )); do
+      forward_args+=("-L" "$1:127.0.0.1:$1")
+      shift
+  done
+  
+  if (( ${#forward_args[@]} > 0 )); then
+      s "${forward_args[@]}" "$server"
+  else
+      s "$server"
+  fi
+}
