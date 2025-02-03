@@ -1,0 +1,15 @@
+.cm-formatting-list.cm-formatting-list-ol {
+    margin-right: 10px;
+}
+
+.cm-formatting-list.cm-formatting-list-ul {
+    margin-right: 10px;
+}
+
+/* ---------------- */
+/* read mode tweaks */
+/* ---------------- */
+
+.markdown-preview-view li {
+    padding-left: 10px;
+}

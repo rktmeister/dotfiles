@@ -1,0 +1,13 @@
+.markdown-rendered h1,
+.markdown-rendered h2,
+.markdown-rendered h3,
+.markdown-rendered h4,
+.markdown-rendered h5,
+.markdown-rendered h6 {
+  margin-bottom: 0.5em; /* Space between header and divider */
+}
+
+.markdown-rendered hr{
+  margin-top: 0em;
+  margin-bottom: 0em; /* Space between divider and next content */
+}
