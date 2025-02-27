@@ -123,7 +123,7 @@ alias mini='ssh_connect nevera@100.100.81.26'
 eval "$(fzf --zsh)"
 eval "$(zoxide init --cmd cd zsh)"
 eval "$(uv generate-shell-completion zsh)"  # uv
-# eval "$(uvx generate-shell-completion zsh)"  # uvx
+eval "$(uvx --generate-shell-completion zsh)"  # uvx
 
 export GPG_TTY=$(tty)
 

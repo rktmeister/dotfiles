@@ -62,7 +62,7 @@ final_space = true
 
   [[blocks.segments]]
     leading_diamond = ''
-    trailing_diamond = ''
+    trailing_diamond = ''
     template = '{{ if .SSHSession }} {{ .UserName }}@{{ .HostName }}{{ end }}'
     foreground = 'lightWhite'
     background = 'darkGray'
