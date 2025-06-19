@@ -26,8 +26,11 @@ zinit snippet OMZP::tmux
 # Deno shell completions
 source ~/.deno-completions.zsh
 
-# load completions
-autoload -U compinit && compinit
+# pnpm shell completions
+source ~/.completion-for-pnpm.zsh
+
+# bun completions
+[ -s "/home/$USER/.bun/_bun" ] && source "/home/$USER/.bun/_bun"
 
 zinit cdreplay -q
 
@@ -36,20 +39,22 @@ zinit cdreplay -q
 ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#ff00ff,bg=cyan,bold,underline"
 
 # Export PATHs
-export PATH="$PATH:/home/definevera/.pixi/bin"
+export PATH="$PATH:/home/$USER/.pixi/bin"
 export PATH="$PATH:/home/$USER/.local/bin"
 export PATH="$PATH:/home/$USER/.dotnet/tools"
+export PATH="$PATH:/home/$USER/.local/bin/zig-linux-x86_64-0.14.0"
 export PATH="$PATH:/home/$USER/Document/C4G/birdwatcher"
-export PATH="$PATH:/opt/nvim-linux64/bin"
-export PATH="$PATH:/home/$USER/Documents/Dylan/llama.cpp"
+export PATH="$PATH:/opt/nvim-linux-x86_64/bin"
+export PATH="$PATH:/opt/pycharm-2025.1.1/bin"
 export PATH="$PATH:/usr/local/cuda/bin"
 export PATH="$PATH:/usr/local/go/bin"
+export PATH="$PATH:/home/$USER/.local/share/pnpm"
+export PATH="$PATH:/home/$USER/.koyeb/bin"
 ## bun
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 
 # Export external PATHs
-export NVM_DIR="$HOME/.nvm"
 export LD_LIBRARY_PATH="/usr/local/cuda/lib64:$LD_LIBRARY_PATH"
 # export DOCKER_HOST=unix:///var/run/docker.sock
 
@@ -91,13 +96,11 @@ alias ls='eza'
 alias vim='nvim'
 alias l='ls'
 alias c='clear'
-alias ks='kitten ssh'
-alias s='ssh'
+alias s='ssh_connect'
 alias zupdate='source ~/.zshrc'
 alias zconfig='vim ~/.zshrc'
 alias adg='sudo apt update && sudo apt upgrade'
-alias icat='kitten icat'
-alias downloader='curl -fSsL -O -J -k --retry 5 --retry-delay 3 --retry-max-time 60 --connect-timeout 30 -A "Mozilla/5.0" --max-redirs 10'
+alias dl='curl -fSsL -O -J -k --retry 5 --retry-delay 3 --retry-max-time 60 --connect-timeout 30 -A "Mozilla/5.0" --max-redirs 10'
 
 ## Docker aliases
 alias dcup='docker compose up'
@@ -110,7 +113,7 @@ alias dstack='docker stack'
 ## SSH Aliases
 ### Port Forwarding (-L <local_port>:localhost:<remote_port>)
 ### Debug (-v)
-alias rnd-dylan-sch='ssh_connect dylan@10.32.10.178' 
+alias rnd-dylan-sch='ssh_connect dylan@10.32.22.168' 
 alias rnd-user-sch='ssh_connect user@10.32.10.178'
 alias prod-sch='ssh_connect chat4good@10.32.45.55'
 alias rnd-dylan='ssh_connect dylan@100.94.88.29'
@@ -124,77 +127,74 @@ eval "$(fzf --zsh)"
 eval "$(zoxide init --cmd cd zsh)"
 eval "$(uv generate-shell-completion zsh)"  # uv
 eval "$(uvx --generate-shell-completion zsh)"  # uvx
+eval "$(pixi completion --shell zsh)"  # pixi
+. "/home/$USER/.deno/env"  #deno
 
 export GPG_TTY=$(tty)
 
-# nvm
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-
-# Bun
-# place this after nvm initialization!
-autoload -U add-zsh-hook
-
-load-nvmrc() {
-  local nvmrc_path
-  nvmrc_path="$(nvm_find_nvmrc)"
-
-  if [ -n "$nvmrc_path" ]; then
-    local nvmrc_node_version
-    nvmrc_node_version=$(nvm version "$(cat "${nvmrc_path}")")
-
-    if [ "$nvmrc_node_version" = "N/A" ]; then
-      nvm install
-    elif [ "$nvmrc_node_version" != "$(nvm version)" ]; then
-      nvm use
-    fi
-  elif [ -n "$(PWD=$OLDPWD nvm_find_nvmrc)" ] && [ "$(nvm version)" != "$(nvm version default)" ]; then
-    echo "Reverting to nvm default version"
-    nvm use default
-  fi
-}
-
-add-zsh-hook chpwd load-nvmrc
-load-nvmrc
-
-# pixi
-eval "$(pixi completion --shell zsh)"
-
-# deno
-. "/home/definevera/.deno/env"
-
 # pnpm
-export PNPM_HOME="/home/definevera/.local/share/pnpm"
+export PNPM_HOME="/home/$USER/.local/share/pnpm"
 case ":$PATH:" in
   *":$PNPM_HOME:"*) ;;
   *) export PATH="$PNPM_HOME:$PATH" ;;
 esac
 # pnpm end
 
-# bun completions
-[ -s "/home/definevera/.bun/_bun" ] && source "/home/definevera/.bun/_bun"
-
 # ssh QOL
 ssh_connect() {
   local server=$1
   shift
   local forward_args=()
+  local ports=()
   
   while (( $# > 0 )); do
-    # Check if argument is a valid port number (between 1024-49151)
-    if [[ $1 =~ ^[0-9]+$ ]] && [ "$1" -ge 1024 ] && [ "$1" -le 49151 ]; then
-      forward_args+=("-L" "$1:127.0.0.1:$1")
+    # Handle port range (e.g., 8080-8090)
+    if [[ $1 =~ ^([0-9]+)-([0-9]+)$ ]]; then
+      local start=${match[1]}
+      local end=${match[2]}
+      
+      if (( start >= 1024 && end <= 49151 && start <= end )); then
+        for port in $(seq $start $end); do
+          forward_args+=("-L" "$port:127.0.0.1:$port")
+          ports+=("$port")
+        done
+      else
+        echo "Warning: Invalid port range: $1. Ports must be between 1024-49151 and start <= end"
+      fi
+    
+    # Handle different local:remote port mapping (e.g., 8080:9090)
+    elif [[ $1 =~ ^([0-9]+):([0-9]+)$ ]]; then
+      local local_port=${match[1]}
+      local remote_port=${match[2]}
+      
+      if (( local_port >= 1024 && local_port <= 49151 && 
+            remote_port >= 1024 && remote_port <= 49151 )); then
+        forward_args+=("-L" "$local_port:127.0.0.1:$remote_port")
+        ports+=("$local_port→$remote_port")
+      else
+        echo "Warning: Invalid port mapping: $1. Both ports must be between 1024-49151"
+      fi
+    
+    # Handle single port (existing functionality)
+    elif [[ $1 =~ ^[0-9]+$ ]]; then
+      if (( $1 >= 1024 && $1 <= 49151 )); then
+        forward_args+=("-L" "$1:127.0.0.1:$1")
+        ports+=("$1")
+      else
+        echo "Warning: Invalid port number: $1. Port must be between 1024-49151"
+      fi
+    
     else
-      echo "Warning: Skipping invalid user port number: $1. Port must be between 1024-49151"
+      echo "Warning: Invalid format: $1. Use: port, port:port, or port-port"
     fi
     shift
   done
   
   if (( ${#forward_args[@]} > 0 )); then
-    echo "Creating SSH tunnels for ports: ${forward_args[@]}"
-      s "${forward_args[@]}" "$server"
+    echo "SSH tunnels: ${ports[@]}"
+    ssh "${forward_args[@]}" "$server"
   else
-      s "$server"
+    ssh "$server"
   fi
 }
 
@@ -396,3 +396,13 @@ _tailscale()
 if [ "$funcstack[1]" = "_tailscale" ]; then
     _tailscale
 fi
+
+# Source local/private environment variables if the file exists
+if [ -f ~/.zsh_secrets ]; then
+  source ~/.zsh_secrets
+  # You could add a message to confirm it's loaded, e.g.:
+  # echo "Sourced local secrets from ~/.zsh_secrets"
+fi
+
+# load completions
+autoload -U compinit && compinit

@@ -1,4 +1,4 @@
-if true then return {} end -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
+-- if true then return {} end -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
 
 -- You can also add or configure plugins by creating files in this `plugins/` folder
 -- Here are some examples:
@@ -12,6 +12,29 @@ return {
     "ray-x/lsp_signature.nvim",
     event = "BufRead",
     config = function() require("lsp_signature").setup() end,
+  },
+
+  {
+    "meanderingexile/nostromo-ui.nvim",
+    lazy = false,
+    priority = 1000,
+    config = function()
+      require("nostromo-ui").setup { -- Note: 'nostromo' is the Lua module
+        -- No 'theme' option here directly. It uses vim.o.background.
+        transparent = false,
+        italics = {
+          comments = true,
+          keywords = true,
+          functions = true,
+          strings = true,
+          variables = true,
+        },
+        overrides = {},
+      }
+      -- Set background before applying colorscheme for nostromo.nvim
+      vim.o.background = "dark"
+      vim.cmd.colorscheme "nostromo-ui"
+    end,
   },
 
   -- == Examples of Overriding Plugins ==
@@ -79,6 +102,23 @@ return {
         -- disable for .vim files, but it work for another filetypes
         Rule("a", "a", "-vim")
       )
+    end,
+  },
+  {
+    "akinsho/toggleterm.nvim",
+    config = function(plugin, opts)
+      require("toggleterm").setup(opts)
+
+      function _G.set_terminal_keymaps()
+        local map_opts = { buffer = 0 }
+        vim.keymap.set("t", "<C-h>", [[<C-\><C-n><C-W>h]], map_opts)
+        vim.keymap.set("t", "<C-j>", [[<C-\><C-n><C-W>j]], map_opts)
+        vim.keymap.set("t", "<C-k>", [[<C-\><C-n><C-W>k]], map_opts)
+        vim.keymap.set("t", "<C-l>", [[<C-\><C-n><C-W>l]], map_opts)
+      end
+
+      -- Auto-apply these mappings when entering terminal mode
+      vim.cmd "autocmd! TermOpen term://* lua set_terminal_keymaps()"
     end,
   },
 }

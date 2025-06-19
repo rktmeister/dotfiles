@@ -1,4 +1,4 @@
-config-file = ./catppuccin-mocha
+theme=catppuccin-mocha
 window-theme = ghostty
 
 font-family = JetBrainsMono Nerd Font
@@ -8,12 +8,14 @@ adjust-cell-width = 0%
 adjust-cell-height = 0%
 
 shell-integration = zsh
-shell-integration-features = no-cursor
+shell-integration-features = sudo, no-cursor
 
 cursor-style = bar
 cursor-style-blink = true
 
 background-opacity = 1
+
+mouse-scroll-multiplier = 5
 
 # Tab motions
 keybind = ctrl+shift+left=previous_tab
@@ -27,3 +29,4 @@ keybind = ctrl+l=goto_split:right
 keybind = ctrl+\=new_split:right
 keybind = ctrl+-=new_split:down
 
+keybind = shift+enter=text:\n
