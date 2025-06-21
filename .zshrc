@@ -140,62 +140,134 @@ case ":$PATH:" in
 esac
 # pnpm end
 
-# ssh QOL
+# A powerful SSH connection manager that leverages ControlMaster for persistent tunnels.
+#
+# USAGE:
+#   1. Connect with tunnels (and leave them running in the background):
+#      ssh_connect connect <server> [port] [local:remote] [start-end]
+#
+#   2. Start tunnels in the background WITHOUT opening a shell:
+#      ssh_connect start <server> [port] [local:remote] [start-end]
+#
+#   3. Stop the background connection and all its tunnels:
+#      ssh_connect stop <server>
+#
+#   4. Check the status of the background connection:
+#      ssh_connect status <server>
+#
+# PREREQUISITE:
+#   Your ~/.ssh/config must be configured for ControlMaster.
+#   See: https://www.example.com/ssh-multiplexing-guide
+
 ssh_connect() {
-  local server=$1
-  shift
-  local forward_args=()
-  local ports=()
-  
-  while (( $# > 0 )); do
-    # Handle port range (e.g., 8080-8090)
-    if [[ $1 =~ ^([0-9]+)-([0-9]+)$ ]]; then
-      local start=${match[1]}
-      local end=${match[2]}
-      
-      if (( start >= 1024 && end <= 49151 && start <= end )); then
-        for port in $(seq $start $end); do
-          forward_args+=("-L" "$port:127.0.0.1:$port")
-          ports+=("$port")
-        done
-      else
-        echo "Warning: Invalid port range: $1. Ports must be between 1024-49151 and start <= end"
-      fi
-    
-    # Handle different local:remote port mapping (e.g., 8080:9090)
-    elif [[ $1 =~ ^([0-9]+):([0-9]+)$ ]]; then
-      local local_port=${match[1]}
-      local remote_port=${match[2]}
-      
-      if (( local_port >= 1024 && local_port <= 49151 && 
-            remote_port >= 1024 && remote_port <= 49151 )); then
-        forward_args+=("-L" "$local_port:127.0.0.1:$remote_port")
-        ports+=("$local_port→$remote_port")
-      else
-        echo "Warning: Invalid port mapping: $1. Both ports must be between 1024-49151"
-      fi
-    
-    # Handle single port (existing functionality)
-    elif [[ $1 =~ ^[0-9]+$ ]]; then
-      if (( $1 >= 1024 && $1 <= 49151 )); then
-        forward_args+=("-L" "$1:127.0.0.1:$1")
-        ports+=("$1")
-      else
-        echo "Warning: Invalid port number: $1. Port must be between 1024-49151"
-      fi
-    
-    else
-      echo "Warning: Invalid format: $1. Use: port, port:port, or port-port"
-    fi
-    shift
-  done
-  
-  if (( ${#forward_args[@]} > 0 )); then
-    echo "SSH tunnels: ${ports[@]}"
-    ssh "${forward_args[@]}" "$server"
-  else
-    ssh "$server"
+  # Zsh-specific: enable extended globbing for regex matching
+  setopt extended_glob
+
+  if [[ $# -lt 1 ]]; then
+    echo "Usage: ssh_connect [connect|start|stop|status] <server_alias> [ports...]"
+    return 1
   fi
+
+  local command=$1
+  local server=$2
+  
+  # If the first argument is not a known command, assume it's a server name
+  # for a standard connection.
+  if [[ "$command" != "connect" && "$command" != "start" && "$command" != "stop" && "$command" != "status" ]]; then
+    server=$1
+    command="connect"
+    shift # The remaining arguments are ports
+  else
+    shift 2 # The remaining arguments are ports
+  fi
+
+  # --- Command Handlers ---
+
+  case "$command" in
+    stop)
+      echo "Stopping SSH master connection and tunnels for $server..."
+      # -O exit sends the 'stop' signal to the master process
+      ssh -O exit "$server"
+      ;;
+
+    status)
+      echo "Checking status of SSH master connection for $server..."
+      # -O check pings the master process
+      ssh -O check "$server"
+      ;;
+
+    start|connect)
+      local forward_args=()
+      local ports_display=()
+      
+      # Your brilliant port-parsing logic remains here
+      while (( $# > 0 )); do
+        if [[ $1 =~ ^([0-9]+)-([0-9]+)$ ]]; then
+          local start=${match[1]} end=${match[2]}
+          if (( start >= 1024 && end <= 49151 && start <= end )); then
+            for port in $(seq $start $end); do
+              forward_args+=("-L" "$port:127.0.0.1:$port")
+              ports_display+=("$port")
+            done
+          else echo "Warning: Invalid port range: $1"
+          fi
+        elif [[ $1 =~ ^([0-9]+):([0-9]+)$ ]]; then
+          local local_port=${match[1]} remote_port=${match[2]}
+          if (( local_port >= 1024 && local_port <= 49151 && remote_port >= 1024 && remote_port <= 49151 )); then
+            forward_args+=("-L" "$local_port:127.0.0.1:$remote_port")
+            ports_display+=("$local_port→$remote_port")
+          else echo "Warning: Invalid port mapping: $1"
+          fi
+        elif [[ $1 =~ ^[0-9]+$ ]]; then
+          if (( $1 >= 1024 && $1 <= 49151 )); then
+            forward_args+=("-L" "$1:127.0.0.1:$1")
+            ports_display+=("$1")
+          else echo "Warning: Invalid port number: $1"
+          fi
+        else echo "Warning: Invalid format: $1"
+        fi
+        shift
+      done
+
+      # --- The Core Logic ---
+      if (( ${#forward_args[@]} > 0 )); then
+        echo "Checking for existing master connection..."
+        # Quietly check if a master is already running.
+        if ssh -O check "$server" &>/dev/null; then
+          echo "Warning: Master connection already exists for $server."
+          echo "Tunnels cannot be added to a running connection."
+          echo "To apply new tunnels, run 'ssh_connect stop $server' first."
+        else
+          echo "Establishing new background master connection for $server..."
+          echo "Forwarding ports: ${ports_display[@]}"
+          
+          # -f: Go into the background
+          # -N: Do not execute a remote command (just for tunnels)
+          # -o ExitOnForwardFailure=yes: Crucial for reliability. The command will fail
+          #   if any of the local ports are already in use.
+          ssh -f -N -o ExitOnForwardFailure=yes "${forward_args[@]}" "$server"
+          
+          if [[ $? -eq 0 ]]; then
+            echo "Tunnels successfully established in the background."
+          else
+            echo "Error: Failed to establish tunnels. A port might be in use or the server is unreachable."
+            return 1
+          fi
+        fi
+      fi
+
+      # For the 'connect' command, open an interactive shell after setting up tunnels.
+      # This will be an instant "slave" connection.
+      if [[ "$command" == "connect" ]]; then
+        echo "Opening interactive shell to $server..."
+        ssh "$server"
+      fi
+      ;;
+    *)
+      echo "Error: Unknown command '$command'"
+      return 1
+      ;;
+  esac
 }
 
 #compdef tailscale
