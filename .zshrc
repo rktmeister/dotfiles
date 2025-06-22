@@ -32,6 +32,9 @@ source ~/.completion-for-pnpm.zsh
 # bun completions
 [ -s "/home/$USER/.bun/_bun" ] && source "/home/$USER/.bun/_bun"
 
+# jj completions
+source ~/.jj-completions.zsh
+
 zinit cdreplay -q
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
@@ -43,7 +46,6 @@ export PATH="$PATH:/home/$USER/.pixi/bin"
 export PATH="$PATH:/home/$USER/.local/bin"
 export PATH="$PATH:/home/$USER/.dotnet/tools"
 export PATH="$PATH:/home/$USER/.local/bin/zig-linux-x86_64-0.14.0"
-export PATH="$PATH:/home/$USER/Document/C4G/birdwatcher"
 export PATH="$PATH:/opt/nvim-linux-x86_64/bin"
 export PATH="$PATH:/opt/pycharm-2025.1.1/bin"
 export PATH="$PATH:/usr/local/cuda/bin"
@@ -92,9 +94,9 @@ zstyle ':fzf-tab:complete:cd:*' fzf-preview 'ls --color $realpath'
 zstyle ':fzf-tab:complete:__zoxide_z:*' fzf-preview 'ls --color $realpath'
 
 # Aliases
+alias l='ls'  # -> eza
 alias ls='eza'
 alias vim='nvim'
-alias l='ls'
 alias c='clear'
 alias s='ssh_connect'
 alias zupdate='source ~/.zshrc'
@@ -110,16 +112,15 @@ alias dclf='docker compose logs -f'
 alias dctx='docker context'
 alias dstack='docker stack'
 
-## SSH Aliases
-### Port Forwarding (-L <local_port>:localhost:<remote_port>)
-### Debug (-v)
-alias rnd-dylan-sch='ssh_connect dylan@10.32.22.168' 
-alias rnd-user-sch='ssh_connect user@10.32.10.178'
-alias prod-sch='ssh_connect chat4good@10.32.45.55'
-alias rnd-dylan='ssh_connect dylan@100.94.88.29'
-alias rnd-user='ssh_connect user@100.94.88.29'
-alias prod='ssh_connect chat4good@100.125.248.67'
-alias mini='ssh_connect nevera@100.100.81.26'
+## SSH Multiplexing aliases
+alias prod-stop='ssh_connect stop prod'
+alias prod-status='ssh_connect status prod'
+alias rnd-dylan-stop='ssh_connect stop rnd-dylan'
+alias rnd-dylan-status='ssh_connect status rnd-dylan'
+alias mini-stop='ssh_connect stop mini'
+alias mini-status='ssh_connect status mini'
+alias ls-sockets='ls ~/.ssh/sockets'
+
 # Aliases end
 
 # Shell integrations
@@ -268,6 +269,18 @@ ssh_connect() {
       return 1
       ;;
   esac
+}
+
+lg()
+{
+    export LAZYGIT_NEW_DIR_FILE=~/.lazygit/newdir
+
+    lazygit "$@"
+
+    if [ -f $LAZYGIT_NEW_DIR_FILE ]; then
+            cd "$(cat $LAZYGIT_NEW_DIR_FILE)"
+            rm -f $LAZYGIT_NEW_DIR_FILE > /dev/null
+    fi
 }
 
 #compdef tailscale

@@ -1,0 +1,1 @@
+Create a new session and ask gemini to help you debug the problem / errors that we're currently facing. Include ALL proper context of the code such that gemini will be able to have a clearer picture of what we're seeing at the same time. Tell gemini to give you several potential causes along with their respective solutions to try and fix the problem at hand.

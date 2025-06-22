@@ -1,0 +1,1 @@
+Use session id $ARGUMENTS from `conversations.json` and then simply continue where you left off with gemini with regards to the code debugging session. Remember to always provide all necessary context to Gemini (e.g. all relevant code blocks) in order to give Gemini the best possible chance to help us during debugging.

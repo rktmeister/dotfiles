@@ -52,7 +52,8 @@ for additional documentation refer to the following link (https://docs.astral.sh
 
 #### dockerfile 
 
-- [Dockerfile template for Python projects](https://raw.githubusercontent.com/astral-sh/uv-docker-example/refs/heads/main/Dockerfile)
+- [Dockerfile template for Python projects](https://raw.githubusercontent.com/astral-sh/uv-docker-example/refs/heads/main/Dockerfile) 
+  - Make sure the version of the base image pulled matches the version in `pyproject.toml`
 
 ## Typescript / Javascript
 

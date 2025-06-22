@@ -1,0 +1,1 @@
+Create a new session and ask gemini to give a critique and review of the recent code implementation. Remember to include ALL relevant parts of the codebase (preferably everything that is related) and tell gemini to give a detailed and thorough code review on potential issues / improvements that could be improved upon.
