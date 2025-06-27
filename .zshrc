@@ -103,6 +103,22 @@ alias zupdate='source ~/.zshrc'
 alias zconfig='vim ~/.zshrc'
 alias adg='sudo apt update && sudo apt upgrade'
 alias dl='curl -fSsL -O -J -k --retry 5 --retry-delay 3 --retry-max-time 60 --connect-timeout 30 -A "Mozilla/5.0" --max-redirs 10'
+alias lj='lazyjj'
+
+#################################################
+#                 Claude CLI Config             #
+#################################################
+
+# -- Convenience Alias
+# alias claude='claude --dangerously-skip-permissions' # Skip interactive permission checks.
+
+# -- Behavior Flags
+export CLAUBBIT=1                       # Enable "Claubbit" feature.
+export ENABLE_BACKGROUND_TASKS=1        # Allow tasks to run in the background.
+export FORCE_AUTO_BACKGROUND_TASKS=1    # Force tasks to run in the background automatically.
+export DISABLE_TELEMETRY=1              # Opt-out of telemetry/data collection.
+
+#################################################
 
 ## Docker aliases
 alias dcup='docker compose up'
@@ -119,7 +135,7 @@ alias rnd-dylan-stop='ssh_connect stop rnd-dylan'
 alias rnd-dylan-status='ssh_connect status rnd-dylan'
 alias mini-stop='ssh_connect stop mini'
 alias mini-status='ssh_connect status mini'
-alias ls-sockets='ls ~/.ssh/sockets'
+alias sockets='ls ~/.ssh/sockets'
 
 # Aliases end
 

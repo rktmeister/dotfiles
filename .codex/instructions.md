@@ -1,0 +1,1 @@
+/home/definevera/dotfiles/.claude/CLAUDE.md

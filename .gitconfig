@@ -1,0 +1,18 @@
+[credential]
+	credentialStore = gpg
+	helper = /home/definevera/.dotnet/tools/git-credential-manager
+[credential "https://dev.azure.com"]
+	useHttpPath = true
+[credential "https://github.com"]
+	username = rktmeister
+[init]
+	defaultBranch = main
+[user]
+	email = dylan.raharja@gmail.com
+	name = Dylan Raharja
+[pull]
+	rebase = false
+[push]
+	default = current  # Push only current branch
+[merge]
+  conflictStyle = "diff3"

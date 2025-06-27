@@ -1,8 +1,14 @@
-# General
+# Guidelines
 
 ## `ast-grep` (Code structural search, lint, and rewriting.)
 
 You run in an environment where `ast-grep` is available; whenever a search requires syntax-aware or structural matching, default to `ast-grep --lang rust -p '<pattern>'` (or set `--lang` appropriately) and avoid falling back to text-only tools like `rg` or `grep` unless I explicitly request a plain-text search.
+
+## `rg` (ripgrep)
+
+Instead of using `grep`, use `rg` as its replacement as it is faster for you to find results rather than using grep.
+
+For more information regarding syntax, refer to [docs](https://gist.githubusercontent.com/rktmeister/f05173c432fc39e36871eb8ea910ab9f/raw/4bbc1e2d4aa6b4832ace98f4ad11646f8e537632/ripgrep-docs.txt)
 
 ## `gh` (Github CLI)
 
@@ -23,6 +29,8 @@ When writing commits (first pick the files you want to add using `git add <files
 1. `revert`: Reverting a previous commit
 1. `style`: Code style changes (formatting, missing semicolons, etc.) without logic changes
 1. `test`: Adding or modifying tests
+
+You are also free to write new single words if you deem fit (e.g. implementing a feature that is only available in macOS: `macos`, etc.)
 
 ## Docker
 
