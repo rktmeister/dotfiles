@@ -53,8 +53,10 @@ fi
 source "${ZINIT_HOME}/zinit.zsh"
 
 # Load plugins
+zinit ice wait lucid blockf
+zinit light zsh-users/zsh-completions
+zinit light romkatv/zsh-defer
 zinit light zsh-users/zsh-syntax-highlighting
-zinit light zsh-users/zsh-completions      # Provides many completions out of the box
 zinit light zsh-users/zsh-autosuggestions
 zinit light Aloxaf/fzf-tab                 # Hooks into the completion system
 
@@ -72,13 +74,31 @@ zinit cdreplay -q
 # This must come AFTER loading plugins (like zsh-completions) but BEFORE
 # shell integrations that might use it (like fzf-tab).
 
-# Add our custom completions directory to the function path
-fpath=($HOME/.zsh/completion $fpath)
+typeset -gU fpath
 
-# Initialize the completion system. This will find all completion files,
-# create a single cache file (~/.zcompdump), and make startup instant.
-autoload -U compinit
-compinit
+# Add our custom completions directory to the function path
+fpath=($HOME/.zsh/completions $fpath)
+
+_zsh_compdump=${XDG_CACHE_HOME:-$HOME/.cache}/zcompdump-$ZSH_VERSION
+
+_zsh_init_completions() {
+  autoload -Uz compinit
+
+  # Load the dump (re-creates the plain file when dirs are newer)
+  if [[ -s ${_zsh_compdump}.zwc ]]; then
+    compinit -C -d "$_zsh_compdump"  # compiled dump exists -> skip security check
+  else
+    compinit -d "$_zsh_compdump"  # first run or .zwc missing
+  fi
+
+  # Re-compile only when needed
+  if [[ ! -s ${_zsh_compdump}.zwc || $_zsh_compdump -nt ${_zsh_compdump}.zwc ]]; then
+    zcompile -U "$_zsh_compdump" &!   # run in background → never blocks prompt
+  fi
+}
+
+# Instant prompt – completions appear 0.2 s later (recommended)
+zsh-defer _zsh_init_completions
 
 #-------------------------------------------------------------------------------
 # SECTION 4: SHELL INTEGRATIONS & UI
