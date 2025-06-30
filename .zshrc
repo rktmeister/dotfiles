@@ -198,11 +198,15 @@ lg() {
 ssh_connect() {
   setopt extended_glob
   if [[ $# -lt 1 ]]; then
-    echo "Usage: ssh_connect [connect|start|stop|status] <server_alias> [ports...]"
+    echo "Usage: ssh_connect [connect|start|stop|status] <server_alias> [ports...] [-- ssh_options...]"
+    echo "Example: ssh_connect start my-server 8080 9000-9010 -- -i ~/.ssh/id_rsa -p 2222"
     return 1
   fi
+
   local command=$1
   local server=$2
+
+  # Handle implicit 'connect' command
   if [[ "$command" != "connect" && "$command" != "start" && "$command" != "stop" && "$command" != "status" ]]; then
     server=$1
     command="connect"
@@ -210,55 +214,80 @@ ssh_connect() {
   else
     shift 2
   fi
+
+  # --- MODIFICATION START ---
+  # Separate port arguments from pass-through ssh options
+  local port_args=()
+  local ssh_opts=()
+  while (( $# > 0 )); do
+    if [[ "$1" == "--" ]]; then
+      shift # Consume the '--'
+      ssh_opts=("$@") # The rest of the arguments are for ssh
+      break
+    fi
+    port_args+=("$1")
+    shift
+  done
+  # --- MODIFICATION END ---
+
   case "$command" in
     stop)
       echo "Stopping SSH master connection and tunnels for $server..."
-      ssh -O exit "$server"
+      # Pass through ssh options
+      ssh -O exit "${ssh_opts[@]}" "$server"
       ;;
     status)
       echo "Checking status of SSH master connection for $server..."
-      ssh -O check "$server"
+      # Pass through ssh options
+      ssh -O check "${ssh_opts[@]}" "$server"
       ;;
     start|connect)
       local forward_args=()
       local ports_display=()
-      while (( $# > 0 )); do
-        if [[ $1 =~ ^([0-9]+)-([0-9]+)$ ]]; then
+      # --- MODIFICATION START ---
+      # Loop over the collected port_args instead of the original $@
+      for arg in "${port_args[@]}"; do
+        if [[ $arg =~ ^([0-9]+)-([0-9]+)$ ]]; then
           local start=${match[1]} end=${match[2]}
           if (( start >= 1024 && end <= 49151 && start <= end )); then
             for port in $(seq $start $end); do
               forward_args+=("-L" "$port:127.0.0.1:$port")
               ports_display+=("$port")
             done
-          else echo "Warning: Invalid port range: $1"
+          else echo "Warning: Invalid port range: $arg"
           fi
-        elif [[ $1 =~ ^([0-9]+):([0-9]+)$ ]]; then
+        elif [[ $arg =~ ^([0-9]+):([0-9]+)$ ]]; then
           local local_port=${match[1]} remote_port=${match[2]}
           if (( local_port >= 1024 && local_port <= 49151 && remote_port >= 1024 && remote_port <= 49151 )); then
             forward_args+=("-L" "$local_port:127.0.0.1:$remote_port")
             ports_display+=("$local_port→$remote_port")
-          else echo "Warning: Invalid port mapping: $1"
+          else echo "Warning: Invalid port mapping: $arg"
           fi
-        elif [[ $1 =~ ^[0-9]+$ ]]; then
-          if (( $1 >= 1024 && $1 <= 49151 )); then
-            forward_args+=("-L" "$1:127.0.0.1:$1")
-            ports_display+=("$1")
-          else echo "Warning: Invalid port number: $1"
+        elif [[ $arg =~ ^[0-9]+$ ]]; then
+          if (( $arg >= 1024 && $arg <= 49151 )); then
+            forward_args+=("-L" "$arg:127.0.0.1:$arg")
+            ports_display+=("$arg")
+          else echo "Warning: Invalid port number: $arg"
           fi
-        else echo "Warning: Invalid format: $1"
+        else echo "Warning: Invalid format: $arg"
         fi
-        shift
       done
+      # --- MODIFICATION END ---
+
       if (( ${#forward_args[@]} > 0 )); then
         echo "Checking for existing master connection..."
-        if ssh -O check "$server" &>/dev/null; then
+        # Pass through ssh options
+        if ssh -O check "${ssh_opts[@]}" "$server" &>/dev/null; then
           echo "Warning: Master connection already exists for $server."
           echo "Tunnels cannot be added to a running connection."
           echo "To apply new tunnels, run 'ssh_connect stop $server' first."
         else
           echo "Establishing new background master connection for $server..."
-          echo "Forwarding ports: ${ports_display[@]}"
-          ssh -f -N -o ExitOnForwardFailure=yes "${forward_args[@]}" "$server"
+          if (( ${#ports_display[@]} > 0 )); then
+            echo "Forwarding ports: ${ports_display[@]}"
+          fi
+          # Pass through ssh options here as well
+          ssh -f -N -o ExitOnForwardFailure=yes "${forward_args[@]}" "${ssh_opts[@]}" "$server"
           if [[ $? -eq 0 ]]; then
             echo "Tunnels successfully established in the background."
           else
@@ -267,9 +296,11 @@ ssh_connect() {
           fi
         fi
       fi
+
       if [[ "$command" == "connect" ]]; then
         echo "Opening interactive shell to $server..."
-        ssh "$server"
+        # And finally, pass through ssh options to the interactive shell
+        ssh "${ssh_opts[@]}" "$server"
       fi
       ;;
     *)
