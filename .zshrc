@@ -158,6 +158,8 @@ alias zconfig='vim ~/.zshrc'
 alias adg='sudo apt update && sudo apt upgrade'
 alias dl='curl -fSsL -O -J -k --retry 5 --retry-delay 3 --retry-max-time 60 --connect-timeout 30 -A "Mozilla/5.0" --max-redirs 10'
 alias lj='lazyjj'
+alias zrecomp='rm ~/.cache/zcompdump-5.9 ~/.cache/zcompdump-5.9.zwc; zupdate'
+alias startros='source /opt/ros/kilted/setup.zsh'
 
 # Docker Aliases
 alias dcup='docker compose up'
