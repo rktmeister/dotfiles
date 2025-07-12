@@ -4,7 +4,8 @@ version = 3
 final_space = true
 
 [secondary_prompt]
-  template = '󱞩  '
+  # template = '󱞩  '
+  template=' '
   foreground = 'magenta'
   background = 'transparent'
 
@@ -76,7 +77,8 @@ final_space = true
   newline = true
 
   [[blocks.segments]]
-    template = '󰁔 '
+    # template = '󰁔 '
+    template=' '
     background = 'transparent'
     type = 'text'
     style = 'plain'
