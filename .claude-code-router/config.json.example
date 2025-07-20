@@ -1,0 +1,29 @@
+{
+  "Providers": [
+    {
+      "name": "openrouter",
+      "api_base_url": "https://openrouter.ai/api/v1/chat/completions",
+      "api_key": "${OPENROUTER_API_KEY}",
+      "models": [
+        "google/gemini-2.5-pro",
+        "moonshotai/kimi-k2"
+      ]
+    },
+    {
+      "name": "baseten",
+      "api_base_url": "https://inference.baseten.co/v1/chat/completions",
+      "api_key": "${BASETEN_API_KEY}",
+      "models": [
+        "moonshotai/Kimi-K2-Instruct"
+      ]
+    },
+    {
+      "name": "moonshotai",
+      "api_base_url": "https://api.moonshot.ai/anthropic/v1/chat/completions",
+      "api_key": "${MOONSHOT_API_KEY}",
+      "models": [
+        "kimi-k2-0711-preview"
+      ]
+    }
+  ]
+}
