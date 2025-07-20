@@ -34,4 +34,22 @@ git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 
 Clone this repo in the `$HOME` directory, cd into `dotfiles/`, and then run `stow --adopt .` to create the symlinks.
 
-If stow is not yet installed, you should do so with whatever package manager your OS is using.
+If `stow` is not yet installed, you should do so with whatever package manager your OS is using.
+
+### Completions
+
+1. `mkdir -p ~/.zsh/completions/`
+1. Create the completions file for all of your tools that you have, below is a couple of the common and popular tools
+
+```bash
+
+
+```
+
+Once all of the completions file have been created, simply run `zrecomp` and this will enable completions. If you do add more tools and it has its own completions, remember to run `zrecomp` again after adding it into the folder.
+
+### Environment Variables + Claude Code Router
+
+Once you've cloned this repo, make sure to add in the .zsh_secrets file to store all of your API keys that you want to export as an environment variable.
+
+Then, once you've set all of your API keys, `cd .claude-code-router` and run `envsubst < config.json.example > config.json`. This will create the `config.json` file for you without having to manually fill in each provider's API key.
