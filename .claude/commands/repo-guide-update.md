@@ -1,0 +1,1 @@
+Update the PROJECT_GUIDE.md to reflect any changes (like refactoring, additional features being added, changes in how certain API requests was being handled, etc). Remember to still keep the comprehensive distillation of key files and features as this will serve as a bootstrap for future AI agents without the need to explore the repo upon each startup.

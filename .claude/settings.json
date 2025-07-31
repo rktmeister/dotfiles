@@ -1,0 +1,63 @@
+{
+  "env": {
+    "DISABLE_ZOXIDE": "1",
+    "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1",
+    "ENABLE_BACKGROUND_TASKS": "1"
+  },
+  "permissions": {
+    "allow": [
+      "mcp__ask-llm__ask_gemini",
+      "mcp__ask-llm__ask_deepseek",
+      "mcp__ask-llm__ask_openai",
+      "mcp__ask-llm__create_session",
+      "mcp__ask-llm__list_sessions",
+      "mcp__ask-llm__save_sessions",
+      "mcp__ask-llm__rename_session",
+      "mcp__ask-llm__get_session_messages",
+      "mcp__ask-llm__delete_session",
+      "mcp__ask-llm__clear_session"
+    ],
+    "deny": [
+      "NotebookRead",
+      "NotebookEdit"
+    ]
+  },
+  "includeCoAuthoredBy": false,
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash|Run",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 ~/.claude/hooks/pre_tool_use_uv.py",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Bash|Run",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 ~/.claude/hooks/post_tool_use_uv.py"
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 ~/.claude/hooks/notification_uv.py"
+          }
+        ]
+      }
+    ]
+  },
+  "model": "opus"
+}
