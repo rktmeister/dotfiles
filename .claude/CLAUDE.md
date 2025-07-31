@@ -1,4 +1,8 @@
-# Guidelines
+# General Guidelines
+
+## Security Best Practices
+
+Do not read the `.env` file
 
 ## `ast-grep` (Code structural search, lint, and rewriting.)
 
@@ -78,5 +82,4 @@ Use `pnpm` as the package manager when dealing with Typescript / Javascript proj
 
 ## Styling
 
-- Make sure to use spaces for tabs and indents
-- Utilize **2 spaces** instead of 4 spaces for tabs and indents.
+- Make sure to use **4 spaces** for tabs and indents
