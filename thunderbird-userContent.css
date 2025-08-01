@@ -1,0 +1,74 @@
+/* Catppuccin Mocha Theme for Thunderbird Email Body */
+
+/* body { */
+/*     background-color: #1e1e2e !important; */
+/*     color: #cdd6f4 !important; */
+/* } */
+/* a:link { color: #89b4fa !important; } */
+/* a:visited { color: #cba6f7 !important; } */
+/* blockquote { */
+/*     background-color: #313244 !important; */
+/*     border-left: 2px solid #b4befe !important; */
+/*     color: #a6adc8 !important; */
+/* } */
+/* .moz-cite-prefix { color: #9399b2 !important; } */
+/* table, tr, td { */
+/*     background-color: transparent !important; */
+/*     color: inherit !important; */
+/* } */
+/* pre, code { */
+/*     background-color: #181825 !important; */
+/*     color: #cdd6f4 !important; */
+/*     border: 1px solid #45475a; */
+/*     padding: 10px; */
+/*     border-radius: 5px; */
+/* } */
+
+/*
+ * Tokyo Night Dark Theme for Thunderbird Email Body
+ * Replaces the default white background and black text in messages.
+ */
+
+/* General body style for all messages */
+body {
+    background-color: #1a1b26 !important; /* bg */
+    color: #c0caf5 !important;            /* fg */
+}
+
+/* Make links readable and on-theme */
+a:link {
+    color: #7aa2f7 !important; /* blue */
+}
+
+a:visited {
+    color: #bb9af7 !important; /* magenta */
+}
+
+/* Style for blockquotes (replied/forwarded text) */
+blockquote {
+    background-color: #24283b !important; /* bg_highlight */
+    border-left: 2px solid #7aa2f7 !important; /* blue */
+    color: #a9b1d6 !important; /* fg_dark */
+    padding-left: 1em !important;
+    margin-left: 0.5em !important;
+}
+
+/* Styling for the "On [date], [person] wrote:" prefix */
+.moz-cite-prefix {
+    color: #565f89 !important; /* comment */
+}
+
+/* Fix for some emails that use tables for layout */
+table, tr, td {
+    background-color: transparent !important;
+    color: inherit !important;
+}
+
+/* Fix for preformatted text (code blocks) */
+pre, code {
+    background-color: #1f2335 !important; /* bg_dark */
+    color: #c0caf5 !important;            /* fg */
+    border: 1px solid #414868;            /* git.deleted (good border color) */
+    padding: 10px;
+    border-radius: 5px;
+}
