@@ -37,6 +37,7 @@ export PATH="/usr/local/cuda/bin:$PATH"
 
 # Set library paths and other system variables
 export LD_LIBRARY_PATH="/usr/local/cuda/lib64:$LD_LIBRARY_PATH"
+export LD_LIBRARY_PATH="$HOME/cudnn-v8/cudnn-linux-x86_64-8.9.7.29_cuda12-archive/lib:$LD_LIBRARY_PATH"  # libcudnn8
 export GPG_TTY=$(tty)
 # export DOCKER_HOST=unix:///var/run/docker.sock
 
@@ -65,6 +66,7 @@ zinit snippet OMZP::git
 zinit snippet OMZP::sudo
 zinit snippet OMZP::command-not-found
 zinit snippet OMZP::tmux
+zinit snippet OMZP::fancy-ctrl-z
 
 zinit cdreplay -q
 
@@ -111,7 +113,10 @@ eval "$(oh-my-posh init zsh --config $HOME/.config/ohmyposh/dylan.toml)"
 
 # FZF and Zoxide
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-eval "$(zoxide init --cmd cd zsh)"
+
+if [ -z "$DISABLE_ZOXIDE" ]; then
+  eval "$(zoxide init --cmd cd zsh)"
+fi
 
 #-------------------------------------------------------------------------------
 # SECTION 5: ZSH OPTIONS & STYLING
@@ -176,13 +181,15 @@ alias rnd-dylan-stop='ssh_connect stop rnd-dylan'
 alias rnd-dylan-status='ssh_connect status rnd-dylan'
 alias mini-stop='ssh_connect stop mini'
 alias mini-status='ssh_connect status mini'
+alias proxy-stop='ssh_connect stop proxy'
+alias proxy-status='ssh_connect status proxy'
 alias sockets='ls ~/.ssh/sockets'
 
 # Claude CLI Config
-export CLAUBBIT=1
 export ENABLE_BACKGROUND_TASKS=1
-export FORCE_AUTO_BACKGROUND_TASKS=1
+export CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1
 export DISABLE_TELEMETRY=1
+alias qlaude='API_TIMEOUT_MS=600000 ANTHROPIC_BASE_URL=http://localhost:4000 ANTHROPIC_MODEL=openrouter/qwen/qwen3-coder ANTHROPIC_SMALL_FAST_MODEL=openrouter/qwen/qwen3-coder claude'
 
 # --- Custom Functions ---
 
