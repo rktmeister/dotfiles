@@ -110,8 +110,7 @@ zsh-defer _zsh_init_completions
 # The 'eval' calls here are correct and necessary for them to function.
 
 # OhMyPosh Prompt
-# eval "$(oh-my-posh init zsh --config $HOME/.config/ohmyposh/dylan.toml)"
-zsh-defer 'oh-my-posh init zsh --config "$HOME/.config/ohmyposh/dylan.toml" --shell zsh --print | source'
+zsh-defer -c 'eval "$(oh-my-posh init zsh --config $HOME/.config/ohmyposh/dylan.toml)"'
 
 
 # FZF and Zoxide
