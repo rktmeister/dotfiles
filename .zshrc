@@ -31,6 +31,7 @@ export PATH="/opt/nvim-linux-x86_64/bin:$PATH"
 export PATH="/opt/pycharm-2025.1.1/bin:$PATH"
 export PATH="/usr/local/go/bin:$PATH"
 export PATH="/usr/local/cuda/bin:$PATH"
+export LC_ALL="en_US.UTF_8"
 
 # Source Deno's specific environment script
 [ -s "$HOME/.deno/env" ] && . "$HOME/.deno/env"
@@ -109,7 +110,9 @@ zsh-defer _zsh_init_completions
 # The 'eval' calls here are correct and necessary for them to function.
 
 # OhMyPosh Prompt
-eval "$(oh-my-posh init zsh --config $HOME/.config/ohmyposh/dylan.toml)"
+# eval "$(oh-my-posh init zsh --config $HOME/.config/ohmyposh/dylan.toml)"
+zsh-defer 'oh-my-posh init zsh --config "$HOME/.config/ohmyposh/dylan.toml" --shell zsh --print | source'
+
 
 # FZF and Zoxide
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
@@ -165,6 +168,7 @@ alias dl='curl -fSsL -O -J -k --retry 5 --retry-delay 3 --retry-max-time 60 --co
 alias lj='lazyjj'
 alias zrecomp='rm ~/.cache/zcompdump-5.9 ~/.cache/zcompdump-5.9.zwc; zupdate'
 alias startros='source /opt/ros/kilted/setup.zsh'
+alias upgrade='sudo apt update && sudo apt upgrade -y; flatpak update; sudo snap refresh; oh-my-posh upgrade'
 
 # Docker Aliases
 alias dcup='docker compose up'
@@ -183,13 +187,16 @@ alias mini-stop='ssh_connect stop mini'
 alias mini-status='ssh_connect status mini'
 alias proxy-stop='ssh_connect stop proxy'
 alias proxy-status='ssh_connect status proxy'
+alias studio-stop='ssh_connect stop studio'
+alias studio-status='ssh_connect status studio'
 alias sockets='ls ~/.ssh/sockets'
 
 # Claude CLI Config
 export ENABLE_BACKGROUND_TASKS=1
 export CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1
 export DISABLE_TELEMETRY=1
-alias qlaude='API_TIMEOUT_MS=600000 ANTHROPIC_BASE_URL=http://localhost:4000 ANTHROPIC_MODEL=openrouter/qwen/qwen3-coder ANTHROPIC_SMALL_FAST_MODEL=openrouter/qwen/qwen3-coder claude'
+alias qlaude='API_TIMEOUT_MS=600000 ANTHROPIC_BASE_URL=http://localhost:4000 ANTHROPIC_MODEL=openrouter/qwen/qwen3-coder ANTHROPIC_SMALL_FAST_MODEL=openrouter/qwen/qwen3-coder claude --dangerously-skip-permissions'
+alias klaude='export ANTHROPIC_BASE_URL=https://api.moonshot.ai/anthropic claude --dangerously-skip-permissions'
 
 # --- Custom Functions ---
 
