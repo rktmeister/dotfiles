@@ -3,7 +3,7 @@
     "DISABLE_ZOXIDE": "1",
     "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1",
     "ENABLE_BACKGROUND_TASKS": "1",
-    "BASH_DEFAULT_TIMEOUT_MS": "10000"
+    "BASH_DEFAULT_TIMEOUT_MS": "600000"
   },
   "permissions": {
     "allow": [
