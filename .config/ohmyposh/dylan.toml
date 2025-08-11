@@ -77,8 +77,8 @@ final_space = true
   newline = true
 
   [[blocks.segments]]
-    # template = '󰁔 '
-    template=' '
+    template = '󰁔 '
+    # template=' '
     background = 'transparent'
     type = 'text'
     style = 'plain'

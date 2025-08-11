@@ -1,0 +1,15 @@
+projects = { "/home/definevera/Documents/RA/vlm-research" = { trust_level = "trusted" } , "/home/definevera/Documents/RA/harmful_moderation" = { trust_level = "trusted" } }
+
+model = "gpt-5"
+
+[profiles.gpt5]
+model = "gpt-5"
+model_provider = "openai"
+model_reasoning_effort = "medium"
+model_reasoning_summary = "auto"
+
+[profiles.gpt5-high-none]
+model = "gpt-5"
+model_provider = "openai"
+model_reasoning_effort  = "high"
+model_reasoning_summary = "none"

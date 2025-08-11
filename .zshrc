@@ -31,7 +31,7 @@ export PATH="/opt/nvim-linux-x86_64/bin:$PATH"
 export PATH="/opt/pycharm-2025.1.1/bin:$PATH"
 export PATH="/usr/local/go/bin:$PATH"
 export PATH="/usr/local/cuda/bin:$PATH"
-export LC_ALL="en_US.UTF_8"
+# export LC_ALL="en_US.UTF_8"
 
 # Source Deno's specific environment script
 [ -s "$HOME/.deno/env" ] && . "$HOME/.deno/env"
@@ -324,3 +324,6 @@ ssh_connect() {
       ;;
   esac
 }
+
+# bun completions
+[ -s "/home/definevera/.bun/_bun" ] && source "/home/definevera/.bun/_bun"

@@ -82,4 +82,4 @@ Use `pnpm` as the package manager when dealing with Typescript / Javascript proj
 
 ## Styling
 
-- Make sure to use **4 spaces** for tabs and indents
+- Use **2 spaces** for tabs and indents
