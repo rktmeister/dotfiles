@@ -1,5 +1,5 @@
 # Nice themes are: GruvboxDarkHard, tokyonight_night, catppuccin_mocha, nostromo
-theme = tokyonight_night
+theme = GruvboxDarkHard
 window-theme = ghostty
 
 font-family = JetBrainsMono Nerd Font

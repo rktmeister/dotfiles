@@ -131,7 +131,7 @@ SAVEHIST=$HISTSIZE
 setopt appendhistory sharehistory hist_ignore_space hist_ignore_all_dups hist_save_no_dups
 
 # Autosuggestions Styling
-ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#ff00ff,bg=cyan,bold,underline"
+ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#928374"
 
 # Completion Styling (including fzf-tab)
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
