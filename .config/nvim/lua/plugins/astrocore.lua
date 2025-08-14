@@ -71,12 +71,21 @@ return {
           desc = "Close buffer from tabline",
         },
 
+        ["<Leader>vs"] = { "<cmd>VenvSelect<cr>", desc = "Select Python venv" },
+        ["<Leader>vc"] = { "<cmd>VenvSelectCached<cr>", desc = "Select cached Python venv" },
+
+        ["<Leader>v"] = { desc = "󰌠 Virtual Env" },
+
         -- tables with just a `desc` key will be registered with which-key if it's installed
         -- this is useful for naming menus
         -- ["<Leader>b"] = { desc = "Buffers" },
 
         -- setting a mapping to false will disable it
         -- ["<C-S>"] = false,
+      },
+      t = {
+        ["<Esc>"] = { "<C-\\><C-n>", desc = "Exit terminal mode" },
+        ["<C-h>"] = { "<cmd>ToggleTerm<cr>", desc = "Hide terminal" },
       },
     },
   },
