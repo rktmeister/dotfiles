@@ -1,0 +1,111 @@
+{
+  // Zed Configuration for Python with Astral toolchain (uv + ruff + ty)
+  
+  // Edit predictions and AI features
+  "edit_predictions": {
+    "mode": "subtle",
+    "copilot": {
+      "proxy": null,
+      "proxy_no_verify": null,
+      "enterprise_uri": null
+    },
+    "enabled_in_text_threads": false
+  },
+  "agent": {
+    "play_sound_when_agent_done": true,
+    "default_profile": "write",
+    "default_model": {
+      "provider": "google",
+      "model": "gemini-2.5-pro"
+    }
+  },
+  "features": {
+    "edit_prediction_provider": "zed"
+  },
+  
+  // Telemetry and privacy
+  "telemetry": {
+    "diagnostics": true,
+    "metrics": false
+  },
+  
+  // UI and theming
+  "icon_theme": "Zed (Default)",
+  "vim_mode": true,
+  "ui_font_size": 14,
+  "buffer_font_size": 14,
+  "theme": {
+    "mode": "system",
+    "light": "One Light",
+    "dark": "Gruvbox Dark Hard"
+  },
+  
+  // Editor settings
+  "tab_size": 4,
+  "preferred_line_length": 88,
+  "format_on_save": "on",
+  "auto_save": "on_focus_change",
+  
+  // Python language configuration
+  "languages": {
+    "Python": {
+      "language_servers": ["ruff", "ty"],
+      "format_on_save": "on",
+      "formatter": [{
+        "language_server": {
+          "name": "ruff"
+        }
+      }],
+      "tab_size": 4,
+      "preferred_line_length": 88
+    }
+  },
+  
+  // LSP configuration for Python tools
+  "lsp": {
+    "ruff": {
+      "initialization_options": {
+        "settings": {
+          "lineLength": 88,
+          "lint": {
+            "select": ["E", "F", "I", "N", "W", "UP", "B", "C4", "PIE", "SIM"],
+            "ignore": []
+          },
+          "format": {
+            "quote-style": "double",
+            "indent-style": "space"
+          }
+        }
+      }
+    },
+    "ty": {
+      "initialization_options": {
+        "settings": {
+          "python": {
+            "analysis": {
+              "typeCheckingMode": "strict",
+              "diagnosticMode": "workspace"
+            }
+          }
+        }
+      }
+    }
+  },
+  
+  // Terminal configuration for uv
+  "terminal": {
+    "font_family": "JetBrainsMono Nerd Font Mono",
+    "shell": {
+      "program": "/bin/zsh"
+    },
+    "env": {
+      "UV_TOOL_DIR": "$HOME/.local/share/uv/tools"
+    }
+  },
+  
+  // File associations
+  "file_types": {
+    "pyproject.toml": ["TOML"],
+    "uv.lock": ["TOML"]
+  }
+}
