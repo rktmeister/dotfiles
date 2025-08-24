@@ -57,8 +57,8 @@ for additional documentation refer to the following link (https://docs.astral.sh
 
 ### styling
 
-- make sure to use spaces for tabs and indents.
-- utilize **2 spaces** instead of the 4 spaces for tabs and indents that pep8 recommends.
+- Make sure to use spaces for tabs and indents.
+- Utilize **4 spaces** for tabs and indents that pep8 recommends.
 
 ### containerization
 
