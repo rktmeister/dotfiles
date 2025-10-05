@@ -134,20 +134,12 @@
       --background-color-box: #1e1e2e !important;
     }
 
-    addon-page-header#page-header[type="extension"] .sticky-container,
-    addon-page-header#page-header[type="detail"] .sticky-container {
+    addon-page-header#page-header .sticky-container {
       background-color: var(--background-color-box, #1e1e2e) !important;
       border-color: #313244 !important;
     }
 
-    addon-page-header#page-header[type="extension"] .sticky-container .main-search,
-    addon-page-header#page-header[type="detail"] .sticky-container .main-search {
-      background-color: inherit !important;
-      border-color: inherit !important;
-    }
-
-    addon-page-header#page-header[type="extension"] .sticky-container .main-heading,
-    addon-page-header#page-header[type="detail"] .sticky-container .main-heading {
+    addon-page-header#page-header .sticky-container :is(.main-search, .main-heading) {
       background-color: inherit !important;
       border-color: inherit !important;
     }
