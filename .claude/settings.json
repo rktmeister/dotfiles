@@ -4,8 +4,10 @@
     "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1",
     "ENABLE_BACKGROUND_TASKS": "1",
     "BASH_DEFAULT_TIMEOUT_MS": "600000",
-    "EDITOR": "nvim"
+    "EDITOR": "nvim",
+    "DISABLE_AUTOUPDATER": "1"
   },
+  "includeCoAuthoredBy": false,
   "permissions": {
     "allow": [
       "mcp__ask-llm__ask_gemini",
@@ -24,7 +26,6 @@
       "NotebookEdit"
     ]
   },
-  "includeCoAuthoredBy": false,
   "hooks": {
     "PreToolUse": [
       {
@@ -65,5 +66,5 @@
     "type": "command",
     "command": "input=$(cat); printf \"\\033[01;32m%s@%s\\033[00m:\\033[01;34m%s\\033[00m\" \"$(whoami)\" \"$(hostname -s)\" \"$(echo \"$input\" | jq -r '.workspace.current_dir')\""
   },
-  "model": "sonnet"
+  "alwaysThinkingEnabled": false
 }

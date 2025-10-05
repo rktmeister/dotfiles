@@ -1,0 +1,12 @@
+{
+	"schemaVersion": "0.1.0",
+	"name": "Substack",
+	"behavior": "create",
+	"noteContentFormat": "{{content}}# {{selector:h1.post-title}}\n\n_{{selector:h3.subtitle}}_\n\n{{selectorHtml:div.available-content div.body > :is(p:not(.button-wrapper),div:not(.subscription-widget-wrap),h2,h3,h4,h5,blockquote,ol,ul)|join:\" \"|remove_html:(\"source,.image-link-expand\")|markdown|replace:\"/(?<=^#{1,6} .*?)\\*\\*/gm\":\"\"|replace:\"/\\n\\[(\\d+?)\\]\\(.*?\\)\\n\\n/gm\":\"\\n[^$1]: \"|replace:\"/\\[(\\d+?)\\]\\(.*?\\)/gm\":\"[^$1]\"}}",
+	"properties": [],
+	"triggers": [
+		"/^https:\\/\\/(\\w+)\\.substack\\.com\\/.*$/"
+	],
+	"noteNameFormat": "{{url|split:\"/\"|nth:3|join:\"\"|replace:\"www.\"}} - {{published|slice:0,10}} - {{title|safe_name}}",
+	"path": "Clippings"
+}

@@ -1,15 +1,37 @@
-projects = { "/home/definevera/Documents/RA/vlm-research" = { trust_level = "trusted" } , "/home/definevera/Documents/RA/harmful_moderation" = { trust_level = "trusted" } }
+model = "gpt-5-codex"
+sandbox_mode = "workspace-write"
+profile = "gpt5-high"
 
-model = "gpt-5"
+[tools]
+web_search = true
 
+[sandbox_workspace_write]
+network_access = true
+
+[guardrails]
+confirm_on_rm_rf = true
+
+[profiles]
 [profiles.gpt5]
-model = "gpt-5"
+model = "gpt-5-codex"
 model_provider = "openai"
 model_reasoning_effort = "medium"
 model_reasoning_summary = "auto"
 
-[profiles.gpt5-high-none]
-model = "gpt-5"
+[profiles.gpt5-high]
+model = "gpt-5-codex"
 model_provider = "openai"
-model_reasoning_effort  = "high"
+model_reasoning_effort = "high"
+model_reasoning_summary = "auto"
+model_reasoning_summary_format= "experimental"
+
+[profiles.gpt5-high-none]
+model = "gpt-5-codex"
+model_provider = "openai"
+model_reasoning_effort = "high"
 model_reasoning_summary = "none"
+
+[mcp_servers]
+[mcp_servers.exa]
+command = "npx"
+args = [ "-y", "@smithery/cli@latest", "run", "exa", "--key", "8e52b63c-7dfa-4b6b-bd54-a7e9a254a1ea", "--profile", "loose-scorpion-qDApx3" ]

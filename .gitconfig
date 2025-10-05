@@ -8,7 +8,7 @@
 [init]
 	defaultBranch = main
 [user]
-	email = dylan.raharja@gmail.com
+	email = dylan@chatforgoodtech.com
 	name = Dylan Raharja
 [pull]
 	rebase = false
@@ -16,3 +16,8 @@
 	default = current  # Push only current branch
 [merge]
   conflictStyle = "diff3"
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true

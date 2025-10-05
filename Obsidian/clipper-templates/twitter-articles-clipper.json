@@ -1,0 +1,12 @@
+{
+	"schemaVersion": "0.1.0",
+	"name": "Twitter Articles",
+	"behavior": "create",
+	"noteContentFormat": "# {{selector:div[data-testid=\"twitter-article-title\"]}}\n\n_By {{selector:article[data-testid=\"tweet\"] div[data-testid=\"User-Name\"] a[role=\"link\"] span span|first}} ({{selector:article[data-testid=\"tweet\"] div[data-testid=\"User-Name\"] a[tabindex=\"-1\"] span|first}})_\n\n[View on X]({{url}})\n\n> **Posted:** {{selector:article[data-testid=\"tweet\"] time?datetime|first|date:\"YYYY-MM-DD HH:mm\"}} ({{selector:article[data-testid=\"tweet\"] time|first}})\n> **Captured:** {{time|date:\"YYYY-MM-DD HH:mm\"}}\n\n---\n\n{{selectorHtml:div[data-testid=\"longformRichTextComponent\"]|remove_html:(\"[role='status'][aria-live='polite'],div[data-testid='tweetPhoto']\")|markdown|replace:\"/\\[\\s*!\\[(.*?)\\]\\((.*?)\\)\\s*\\]\\([^\\)]*\\)/g\":\"![$1]($2)\"|replace:\"/\\n{3,}/g\":\"\\n\\n\"}}",
+	"properties": [],
+	"triggers": [
+		"/^https:\\/\\/x\\.com\\/(?:i\\/article\\/\\d+|[^\\/]+\\/status\\/\\d+)/"
+	],
+	"noteNameFormat": "{{selector:article[data-testid=\"tweet\"] div[data-testid=\"User-Name\"] span span|first|safe_name}} - {{selector:article[data-testid=\"tweet\"] time?datetime|first|date:(\"YYYY-MM-DD\",\"YYYY-MM-DDTHH:mm:ss.SSS[Z]\")}} - {{selector:div[data-testid=\"twitter-article-title\"]|first|safe_name}}",
+	"path": "Clippings"
+}

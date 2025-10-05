@@ -18,18 +18,24 @@
 # Define installation paths for tools
 export BUN_INSTALL="$HOME/.bun"
 export PNPM_HOME="$HOME/.local/share/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+
+# opencode
+export PATH=/home/definevera/.opencode/bin:$PATH
 
 # Prepend all custom paths to the system PATH for priority
-export PATH="$PNPM_HOME:$PATH"
 export PATH="$BUN_INSTALL/bin:$PATH"
 export PATH="$HOME/.koyeb/bin:$PATH"
 export PATH="$HOME/.pixi/bin:$PATH"
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="$HOME/.dotnet/tools:$PATH"
-export PATH="$HOME/.local/bin/zig-linux-x86_64-0.14.0:$PATH"
+export PATH="$HOME/.local/bin/zig-x86_64-linux-0.15.1:$PATH"
 export PATH="$HOME/.local/kitty.app/bin:$PATH"
 export PATH="/opt/nvim-linux-x86_64/bin:$PATH"
-export PATH="/opt/pycharm-2025.1.1/bin:$PATH"
+export PATH="${ASDF_DATA_DIR:-$HOME/.asdf}/shims:$PATH"
 export PATH="/usr/local/go/bin:$PATH"
 export PATH="/usr/local/cuda/bin:$PATH"
 # export LC_ALL="en_US.UTF_8"
@@ -157,7 +163,7 @@ bindkey '^[w' kill-region
 
 # General Aliases
 alias l='eza'
-alias ls='eza'
+alias ll='eza -alh'
 alias vim='nvim'
 alias c='clear'
 alias s='ssh_connect'
@@ -175,6 +181,8 @@ alias js='jj st'
 alias zrecomp='rm ~/.cache/zcompdump-5.9 ~/.cache/zcompdump-5.9.zwc; zupdate'
 alias startros='source /opt/ros/kilted/setup.zsh'
 alias upgrade='sudo apt update && sudo apt upgrade -y; flatpak update; sudo snap refresh; oh-my-posh upgrade'
+alias codex-yolo='codex --yolo'
+alias codex='codex --search --model=gpt-5-codex -c model_reasoning_effort="high" --sandbox workspace-write -c sandbox_workspace_write.network_access=true'
 
 # Docker Aliases
 alias dcup='docker compose up'
@@ -203,6 +211,9 @@ export CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1
 export DISABLE_TELEMETRY=1
 alias qlaude='API_TIMEOUT_MS=600000 ANTHROPIC_BASE_URL=http://localhost:4000 ANTHROPIC_MODEL=openrouter/qwen/qwen3-coder ANTHROPIC_SMALL_FAST_MODEL=openrouter/qwen/qwen3-coder claude --dangerously-skip-permissions'
 alias klaude='export ANTHROPIC_BASE_URL=https://api.moonshot.ai/anthropic claude --dangerously-skip-permissions'
+
+# EDITOR
+export EDITOR=nvim
 
 # --- Custom Functions ---
 

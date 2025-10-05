@@ -84,7 +84,7 @@ return {
         -- ["<C-S>"] = false,
       },
       t = {
-        ["<Esc>"] = { "<C-\\><C-n>", desc = "Exit terminal mode" },
+        ["<C-\\>"] = { "<C-\\><C-n>", desc = "Visual Mode (terminal)" },
         ["<C-h>"] = { "<cmd>ToggleTerm<cr>", desc = "Hide terminal" },
         ["<C-l>"] = { "<cmd>ToggleTerm<cr>", desc = "Hide terminal" },
       },

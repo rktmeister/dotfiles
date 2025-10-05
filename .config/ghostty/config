@@ -12,16 +12,19 @@ adjust-cell-width = 0%
 adjust-cell-height = 0%
 
 background-opacity = 0.95
-unfocused-split-opacity = 0.15
+unfocused-split-opacity = 0.5
+# unfocused-split-fill = #32302f
 
 shell-integration = zsh
 shell-integration-features = sudo, no-cursor
+
+bell-features = border
 
 # Options for cursor-style are: bar, block, underline, block_hollow
 cursor-style = bar
 cursor-style-blink = true
 
-mouse-scroll-multiplier = 5
+mouse-scroll-multiplier = 3
 
 # Tab motions
 keybind = alt+shift+h=previous_tab
@@ -36,3 +39,4 @@ keybind = alt+\=new_split:right
 keybind = alt+-=new_split:down
 
 keybind = shift+enter=text:\n
+

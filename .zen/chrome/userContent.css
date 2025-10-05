@@ -133,6 +133,24 @@
       --zen-dark-color-mix-base: #181825 !important;
       --background-color-box: #1e1e2e !important;
     }
+
+    addon-page-header#page-header[type="extension"] .sticky-container,
+    addon-page-header#page-header[type="detail"] .sticky-container {
+      background-color: var(--background-color-box, #1e1e2e) !important;
+      border-color: #313244 !important;
+    }
+
+    addon-page-header#page-header[type="extension"] .sticky-container .main-search,
+    addon-page-header#page-header[type="detail"] .sticky-container .main-search {
+      background-color: inherit !important;
+      border-color: inherit !important;
+    }
+
+    addon-page-header#page-header[type="extension"] .sticky-container .main-heading,
+    addon-page-header#page-header[type="detail"] .sticky-container .main-heading {
+      background-color: inherit !important;
+      border-color: inherit !important;
+    }
   }
 
   /* Variables and styles specific to about:protections */

@@ -1,5 +1,9 @@
 # General Guidelines
 
+Very important: The user's timezone is `{datetime(.)now().strftime("%Z")}`. The current date is `{datetime(.)now().strftime("%Y-%m-%d")}`. 
+
+Any dates before this are in the past, and any dates after this are in the future. When the user asks for the 'latest', 'most recent', 'today's', etc. don't assume your knowledge is up to date;
+
 ## Security Best Practices
 
 Do not read the `.env` file

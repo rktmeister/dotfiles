@@ -14,6 +14,7 @@ return {
         "pyright",
         "typescript-language-server",
         "rust-analyzer",
+        "json-lsp",
 
         -- install formatters
         "stylua",

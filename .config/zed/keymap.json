@@ -1,0 +1,31 @@
+[
+  {
+    "context": "Dock || Terminal || VimControl || ProjectPanel",
+    "bindings": {
+      "ctrl-h": "workspace::ActivatePaneLeft",
+      "ctrl-j": "workspace::ActivatePaneDown",
+      "ctrl-k": "workspace::ActivatePaneUp",
+      "ctrl-l": "workspace::ActivatePaneRight"
+    }
+  },
+  {
+    "context": "Editor && VimControl",
+    "bindings": {
+      "space o": "project_panel::ToggleFocus",
+      "space \\": "pane::SplitDown",
+      "space |": "pane::SplitRight",
+      "space c": "pane::CloseActiveItem",
+      "ctrl-o": "pane::GoBack",
+      "ctrl-i": "pane::GoForward"
+    }
+  },
+  {
+    "context": "ProjectPanel",
+    "bindings": {
+      "space o": "project_panel::ToggleFocus",
+      "space c": "pane::CloseActiveItem",
+      "ctrl-o": "pane::GoBack",
+      "ctrl-i": "pane::GoForward"
+    }
+  }
+]
