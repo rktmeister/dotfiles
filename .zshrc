@@ -181,6 +181,7 @@ alias js='jj st'
 alias zrecomp='rm ~/.cache/zcompdump-5.9 ~/.cache/zcompdump-5.9.zwc; zupdate'
 alias startros='source /opt/ros/kilted/setup.zsh'
 alias upgrade='sudo apt update && sudo apt upgrade -y; flatpak update; sudo snap refresh; oh-my-posh upgrade'
+alias gearlever='flatpak run it.mijorus.gearlever'
 alias codex-yolo='codex --yolo'
 alias codex='codex --search --model=gpt-5-codex -c model_reasoning_effort="high" --sandbox workspace-write -c sandbox_workspace_write.network_access=true'
 
