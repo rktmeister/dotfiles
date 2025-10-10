@@ -1,3 +1,118 @@
+# =========================
+# SENSITIVE FILES
+# =========================
 .zsh_secrets
 config.json
 conversations
+
+# Secrets and tokens
+*.key
+*.pem
+*.p12
+*.pfx
+*.gpg
+*.age
+*.token
+*.secret
+*.secrets.*
+*.env
+.env
+.env.*
+secrets/
+private/
+**/credentials.json
+**/config.local.json
+
+# SSH keys (ignore all private keys, allow public keys)
+.ssh/*
+!.ssh/config
+!.ssh/config.d/
+!.ssh/*.pub
+
+# GnuPG
+.gnupg/
+
+# =========================
+# SYSTEM / CACHE NOISE
+# =========================
+.DS_Store
+.AppleDouble
+.Trashes
+Thumbs.db
+Desktop.ini
+.cache/
+logs/
+*.log
+
+# =========================
+# TEMP / BACKUP / LOCK FILES
+# =========================
+*.bak
+*.swp
+*.swo
+*.tmp
+*.lock
+*.orig
+*.rej
+
+# =========================
+# EDITOR / TOOLING
+# =========================
+.vscode/
+.idea/
+*.iml
+*.sublime-*
+.vim/
+.tags
+.etags
+
+# direnv, mise, local overrides
+.direnv/
+.devenv/
+.mise/
+.local/
+*.local.sh
+*.local.zsh
+
+# =========================
+# NIX AND FRIENDS
+# =========================
+result
+.result
+.nix-gcRoots/
+nix-result-*/
+.nix-channels
+nix-store-gcroots/
+gcroots/
+
+# Flake and build caches
+.cache/nix/
+.cache/nix-index/
+.cache/direnv/
+
+# =========================
+# DOCKER AND CONTAINERS
+# =========================
+**/.docker/
+**/.dockerignore.local
+docker-compose.override.yml
+*.tar
+
+# =========================
+# OPTIONAL: ZEN BROWSER PROFILE (.zen)
+# Track config, ignore state and secrets
+# =========================
+
+# Zen Browser profile - ignore all, then allow a few files
+/.zen/**           # ignore everything under .zen
+
+!/.zen/            # allow the root .zen dir itself
+!/.zen/**/         # allow traversal into subdirs
+
+# Safe config you actually want to track
+!/.zen/installs.ini           # optional, if stable across machines
+!/.zen/**/user.js
+!/.zen/**/chrome/
+!/.zen/**/chrome/**           # any CSS or assets under chrome
+!/.zen/**/policies.json
+!/.zen/**/extensions.txt
