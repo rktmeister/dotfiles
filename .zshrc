@@ -354,3 +354,8 @@ function y() {
 
 # bun completions
 [ -s "/home/definevera/.bun/_bun" ] && source "/home/definevera/.bun/_bun"
+
+# Added by LM Studio CLI (lms)
+export PATH="$PATH:/home/definevera/.lmstudio/bin"
+# End of LM Studio CLI section
+
