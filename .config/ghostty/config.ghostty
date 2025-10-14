@@ -38,5 +38,6 @@ keybind = alt+l=goto_split:right
 keybind = alt+\=new_split:right
 keybind = alt+-=new_split:down
 
-keybind = shift+enter=csi:13;2u
+# keybind = shift+enter=csi:13;2u
+keybind = shift+enter=text:\n
 
