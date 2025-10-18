@@ -84,6 +84,10 @@ Use `pnpm` as the package manager (unless told otherwise) when dealing with Type
 1. **Removing dependencies**: `pnpm remove <package>`
 1. **Updating packages**: `pnpm up` OR `pnpm update` OR `pnpm upgrade`
 
+## Tmux
+
+When you require to run a CLI command that is non-terminating. Please use tmux in order to not block your process and be able to continue working.
+
 ## Styling
 
 - Use **4 spaces** for tabs and indents
