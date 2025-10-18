@@ -11,7 +11,7 @@ window-height=45
 adjust-cell-width = 0%
 adjust-cell-height = 0%
 
-background-opacity = 0.75
+background-opacity = 0.8
 unfocused-split-opacity = 0.5
 # unfocused-split-fill = #32302f
 
