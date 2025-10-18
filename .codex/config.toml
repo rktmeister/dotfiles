@@ -1,6 +1,10 @@
 model = "gpt-5-codex"
+profile = "gpt5-codex-high"
 sandbox_mode = "workspace-write"
-profile = "gpt5-high"
+
+[shell_environment_policy]
+inherit = "all"
+ignore_default_excludes=true
 
 [tools]
 web_search = true
@@ -12,26 +16,36 @@ network_access = true
 confirm_on_rm_rf = true
 
 [profiles]
-[profiles.gpt5]
+[profiles.gpt5-codex-medium]
 model = "gpt-5-codex"
 model_provider = "openai"
 model_reasoning_effort = "medium"
 model_reasoning_summary = "auto"
+model_reasoning_summary_format = "experimental"
 
-[profiles.gpt5-high]
+[profiles.gpt5-codex-high]
 model = "gpt-5-codex"
 model_provider = "openai"
 model_reasoning_effort = "high"
 model_reasoning_summary = "auto"
-model_reasoning_summary_format= "experimental"
+model_reasoning_summary_format = "experimental"
 
-[profiles.gpt5-high-none]
+[profiles.gpt5-codex-high-none]
 model = "gpt-5-codex"
 model_provider = "openai"
 model_reasoning_effort = "high"
 model_reasoning_summary = "none"
+model_reasoning_summary_format = "experimental"
+
+[profiles.gpt5-high]
+model = "gpt-5"
+model_provider = "openai"
+model_reasoning_effort = "high"
+model_reasoning_summary = "auto"
+model_reasoning_summary_format = "experimental"
 
 [mcp_servers]
 [mcp_servers.exa]
 command = "npx"
 args = [ "-y", "@smithery/cli@latest", "run", "exa", "--key", "8e52b63c-7dfa-4b6b-bd54-a7e9a254a1ea", "--profile", "loose-scorpion-qDApx3" ]
+

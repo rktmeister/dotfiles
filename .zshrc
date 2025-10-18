@@ -32,7 +32,7 @@ export PATH="$HOME/.koyeb/bin:$PATH"
 export PATH="$HOME/.pixi/bin:$PATH"
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="$HOME/.dotnet/tools:$PATH"
-export PATH="$HOME/.local/bin/zig-x86_64-linux-0.15.1:$PATH"
+export PATH="$HOME/.local/bin/zig-x86_64-linux-0.15.2:$PATH"
 export PATH="$HOME/.local/kitty.app/bin:$PATH"
 export PATH="/opt/nvim-linux-x86_64/bin:$PATH"
 export PATH="${ASDF_DATA_DIR:-$HOME/.asdf}/shims:$PATH"
@@ -73,7 +73,6 @@ zinit light Aloxaf/fzf-tab                 # Hooks into the completion system
 zinit snippet OMZP::git
 zinit snippet OMZP::sudo
 zinit snippet OMZP::command-not-found
-zinit snippet OMZP::tmux
 zinit snippet OMZP::fancy-ctrl-z
 
 zinit cdreplay -q
@@ -183,7 +182,9 @@ alias startros='source /opt/ros/kilted/setup.zsh'
 alias upgrade='sudo apt update && sudo apt upgrade -y; flatpak update; sudo snap refresh; oh-my-posh upgrade'
 alias gearlever='flatpak run it.mijorus.gearlever'
 alias codex-yolo='codex --yolo'
-alias codex='codex --search --model=gpt-5-codex -c model_reasoning_effort="high" --sandbox workspace-write -c sandbox_workspace_write.network_access=true'
+alias ts='tmux new -s'
+alias ta='tmux attach -t'
+alias tl='tmux list-session'
 
 # Docker Aliases
 alias dcup='docker compose up'
@@ -194,16 +195,6 @@ alias dctx='docker context'
 alias dstack='docker stack'
 
 # SSH Multiplexing Aliases
-alias prod-stop='ssh_connect stop prod'
-alias prod-status='ssh_connect status prod'
-alias rnd-dylan-stop='ssh_connect stop rnd-dylan'
-alias rnd-dylan-status='ssh_connect status rnd-dylan'
-alias mini-stop='ssh_connect stop mini'
-alias mini-status='ssh_connect status mini'
-alias proxy-stop='ssh_connect stop proxy'
-alias proxy-status='ssh_connect status proxy'
-alias studio-stop='ssh_connect stop studio'
-alias studio-status='ssh_connect status studio'
 alias sockets='ls ~/.ssh/sockets'
 
 # Claude CLI Config
@@ -227,6 +218,131 @@ lg() {
             rm -f $LAZYGIT_NEW_DIR_FILE > /dev/null
     fi
 }
+
+# vpn {zscaler|tailscale|status}
+vpn() {
+  emulate -L zsh -o err_return -o pipefail
+  setopt no_beep
+
+  # Override in rc if names differ. Flags should be a zsh array.
+  # typeset -ga VPN_TS_UP_FLAGS=(--accept-dns=false --hostname=my-box)
+  local ZSCALER_AGENT="${ZSCALER_AGENT:-zsaservice}"
+  local ZSCALER_TUNNEL="${ZSCALER_TUNNEL:-zstunnel}"
+
+  # Lazy binary discovery
+  local TS TLSD RESOLVECTL
+  TS=$(command -v tailscale 2>/dev/null || true)
+  TLSD=$(command -v tailscaled 2>/dev/null || true)
+  RESOLVECTL=$(command -v resolvectl 2>/dev/null || true)
+
+  # Helpers
+  if [[ $EUID -eq 0 ]]; then
+    _sudo() { print -r -- "--> $*"; "$@"; }
+  else
+    _sudo() { print -r -- "--> sudo $*"; sudo "$@"; }
+  fi
+  _active() { systemctl is-active --quiet "$1"; }
+  _unit_loaded() { [[ "$(systemctl show -p LoadState --value "$1" 2>/dev/null)" == "loaded" ]]; }
+  _ts_up() {
+    [[ -n $TS ]] || { print -r -- "tailscale CLI not found"; return 127; }
+    local -a flags=()
+    if (( ${+VPN_TS_UP_FLAGS} )) && [[ ${(t)VPN_TS_UP_FLAGS} == *array* ]]; then
+      flags=("${(@)VPN_TS_UP_FLAGS}")
+    elif [[ -n ${VPN_TS_UP_FLAGS:-} ]]; then
+      setopt localoptions noglob
+      flags=(${=VPN_TS_UP_FLAGS})
+    fi
+    _sudo "$TS" up "${flags[@]}"
+  }
+
+  # Snapshot for rollback
+  local -a PREV_UNITS=()
+  local prev_ts=0
+  _active tailscaled && { PREV_UNITS+=("tailscaled"); prev_ts=1; }
+  _active "$ZSCALER_AGENT" && PREV_UNITS+=("$ZSCALER_AGENT")
+  _active "$ZSCALER_TUNNEL" && PREV_UNITS+=("$ZSCALER_TUNNEL")
+
+  rollback() {
+    print -r -- "\n!! VPN switch failed. Attempting rollback to: ${PREV_UNITS[*]:-(none)}"
+    if (( ${#PREV_UNITS[@]} )); then
+      _sudo systemctl restart "${PREV_UNITS[@]}" || print -r -- "!! Unit restart rollback failed"
+      (( prev_ts )) && { _ts_up || print -r -- "!! tailscale up rollback failed"; }
+    else
+      print -r -- "!! No prior units to restore"
+    fi
+  }
+
+  case "${1:-}" in
+    zscaler)
+      # Already on Zscaler
+      if ! _active tailscaled && { _active "$ZSCALER_AGENT" || _active "$ZSCALER_TUNNEL"; }; then
+        print -r -- "--> Zscaler already active"
+        return 0
+      fi
+      sudo -v || return 1
+      trap 'rollback' ZERR
+
+      print -r -- "--> Deactivating Tailscale"
+      if _active tailscaled; then
+        if [[ -n $TS ]] && ! _sudo "$TS" down; then
+          print -r -- "!! tailscale down failed, proceeding to stop"
+        fi
+        _sudo systemctl stop tailscaled
+      fi
+      # no tailscaled --cleanup
+
+      print -r -- "--> Activating Zscaler (agent then tunnel)"
+      local did_any=0
+      if _unit_loaded "$ZSCALER_AGENT"; then _sudo systemctl restart "$ZSCALER_AGENT"; did_any=1; fi
+      if _unit_loaded "$ZSCALER_TUNNEL"; then _sudo systemctl restart "$ZSCALER_TUNNEL"; did_any=1; fi
+      (( did_any )) || { print -r -- "!! No Zscaler units found"; return 1; }
+      ;;
+
+    tailscale)
+      # Already on Tailscale
+      if _active tailscaled && ! _active "$ZSCALER_AGENT" && ! _active "$ZSCALER_TUNNEL"; then
+        print -r -- "--> Tailscale already active"
+        return 0
+      fi
+      sudo -v || return 1
+      trap 'rollback' ZERR
+
+      print -r -- "--> Deactivating Zscaler"
+      local -a stops=()
+      _unit_loaded "$ZSCALER_AGENT"  && stops+=("$ZSCALER_AGENT")
+      _unit_loaded "$ZSCALER_TUNNEL" && stops+=("$ZSCALER_TUNNEL")
+      (( ${#stops[@]} )) && _sudo systemctl stop "${stops[@]}"
+
+      print -r -- "--> Activating Tailscale"
+      _sudo systemctl restart tailscaled
+      [[ -z "${VPN_SKIP_TS_UP:-}" ]] && _ts_up
+      ;;
+
+    status)
+      {
+        systemctl status --no-pager tailscaled "$ZSCALER_AGENT" "$ZSCALER_TUNNEL"
+        if _active tailscaled && command -v tailscale >/dev/null 2>&1; then
+          tailscale status || true
+        fi
+      } || true
+      return
+      ;;
+
+    *)
+      print -r -- 'usage: vpn {zscaler|tailscale|status}' >&2
+      return 2
+      ;;
+  esac
+
+  trap - ZERR
+  print -r -- "\n--> Switch successful. Final Status:"
+  vpn status
+}
+
+# Completion
+_vpn_complete() { compadd zscaler tailscale status }
+compdef _vpn_complete vpn
+
 
 # SSH connection manager
 ssh_connect() {
@@ -351,9 +467,6 @@ function y() {
 	[ -n "$cwd" ] && [ "$cwd" != "$PWD" ] && builtin cd -- "$cwd"
 	rm -f -- "$tmp"
 }
-
-# bun completions
-[ -s "/home/definevera/.bun/_bun" ] && source "/home/definevera/.bun/_bun"
 
 # Added by LM Studio CLI (lms)
 export PATH="$PATH:/home/definevera/.lmstudio/bin"

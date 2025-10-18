@@ -4,22 +4,38 @@
     "ui_font_weight": 400.0,
     "ui_font_family": ".ZedMono",
     "ssh_connections": [
+    {
+      "host": "rnd-dylan",
+      "args": [],
+      "projects": [
         {
-            "host": "rnd-dylan",
-            "args": [],
-            "projects": [
-                {
-                    "paths": ["/home/dylan/Projects/EL-Bangladesh"]
-                },
-                {
-                    "paths": ["/home/dylan/Projects/IDXLens"]
-                },
-                {
-                    "paths": ["/home/dylan/RA/harmful_moderation"]
-                }
-            ]
+          "paths": [
+            "/home/dylan/Projects/EL-Bangladesh"
+          ]
+        },
+        {
+          "paths": [
+            "/home/dylan/Projects/IDXLens"
+          ]
+        },
+        {
+          "paths": [
+            "/home/dylan/RA/harmful_moderation"
+          ]
+        },
+        {
+          "paths": [
+            "/home/nevera/Projects/erp-service"
+          ]
         }
-    ],
+      ]
+    },
+    {
+      "host": "prod",
+      "args": [],
+      "projects": []
+    }
+  ],
     "edit_predictions": {
         "mode": "subtle",
         "copilot": {

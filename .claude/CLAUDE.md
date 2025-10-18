@@ -49,7 +49,7 @@ You are also free to write new single words if you deem fit (e.g. implementing a
 
 ### package manager
 
-use `uv` when dealing with python projects. here are some common commands to use:
+use `uv` (unless told otherwise) when dealing with python projects. here are some common commands to use:
 
 1. **init a uv project in a new folder**: `uv init <folder-name>`
 1. **init a uv project in an existing folder**: `uv init .`
@@ -75,7 +75,7 @@ for additional documentation refer to the following link (https://docs.astral.sh
 
 ### Package Manager
 
-Use `pnpm` as the package manager when dealing with Typescript / Javascript projects. Here are some common commands:
+Use `pnpm` as the package manager (unless told otherwise) when dealing with Typescript / Javascript projects. Here are some common commands:
 
 1. **Create a `package.json` file inside of the current directory**: `pnpm init`
 1. **Adding dependencies**: `pnpm add <package>`
@@ -86,4 +86,4 @@ Use `pnpm` as the package manager when dealing with Typescript / Javascript proj
 
 ## Styling
 
-- Use **2 spaces** for tabs and indents
+- Use **4 spaces** for tabs and indents

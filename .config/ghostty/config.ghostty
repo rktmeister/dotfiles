@@ -11,7 +11,7 @@ window-height=45
 adjust-cell-width = 0%
 adjust-cell-height = 0%
 
-background-opacity = 0.95
+background-opacity = 0.75
 unfocused-split-opacity = 0.5
 # unfocused-split-fill = #32302f
 
@@ -38,6 +38,5 @@ keybind = alt+l=goto_split:right
 keybind = alt+\=new_split:right
 keybind = alt+-=new_split:down
 
-# keybind = shift+enter=csi:13;2u
-keybind = shift+enter=text:\n
+keybind = shift+enter=text:\x1b\r
 
