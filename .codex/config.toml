@@ -1,13 +1,13 @@
-model = "gpt-5-codex"
-profile = "gpt5-codex-high"
-sandbox_mode = "workspace-write"
+profile = "gpt-5-1-codex-max-high"
+sandbox_mode = "danger-full-access"
+tool_output_token_limit = 25000
 
-[shell_environment_policy]
-inherit = "all"
-ignore_default_excludes=true
+[tui]
+notifications = ["agent-turn-complete", "approval-requested"]
+animations = false
 
-[tools]
-web_search = true
+[features]
+web_search_request = true
 
 [sandbox_workspace_write]
 network_access = true
@@ -15,11 +15,10 @@ network_access = true
 [guardrails]
 confirm_on_rm_rf = true
 
-[profiles]
-[profiles.gpt5-codex-medium]
-model = "gpt-5-codex"
+[profiles.gpt5-high]
+model = "gpt-5"
 model_provider = "openai"
-model_reasoning_effort = "medium"
+model_reasoning_effort = "high"
 model_reasoning_summary = "auto"
 model_reasoning_summary_format = "experimental"
 
@@ -30,22 +29,21 @@ model_reasoning_effort = "high"
 model_reasoning_summary = "auto"
 model_reasoning_summary_format = "experimental"
 
-[profiles.gpt5-codex-high-none]
-model = "gpt-5-codex"
-model_provider = "openai"
-model_reasoning_effort = "high"
-model_reasoning_summary = "none"
-model_reasoning_summary_format = "experimental"
-
-[profiles.gpt5-high]
-model = "gpt-5"
+[profiles.gpt-5-1-codex-max-high]
+model = "gpt-5.1-codex-max"
 model_provider = "openai"
 model_reasoning_effort = "high"
 model_reasoning_summary = "auto"
 model_reasoning_summary_format = "experimental"
 
-[mcp_servers]
-[mcp_servers.exa]
+[profiles.gpt-5-1-codex-max-xhigh]
+model = "gpt-5.1-codex-max"
+model_provider = "openai"
+model_reasoning_effort = "xhigh"
+model_reasoning_summary = "auto"
+model_reasoning_summary_format = "experimental"
+
+[mcp_servers.chrome-devtools]
 command = "npx"
-args = [ "-y", "@smithery/cli@latest", "run", "exa", "--key", "8e52b63c-7dfa-4b6b-bd54-a7e9a254a1ea", "--profile", "loose-scorpion-qDApx3" ]
+args = ["chrome-devtools-mcp@latest"]
 

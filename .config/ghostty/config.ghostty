@@ -11,12 +11,12 @@ window-height=45
 adjust-cell-width = 0%
 adjust-cell-height = 0%
 
-background-opacity = 0.85
+background-opacity = 0.95
 unfocused-split-opacity = 0.5
 # unfocused-split-fill = #32302f
 
 shell-integration = zsh
-shell-integration-features = sudo, no-cursor
+shell-integration-features = sudo,no-cursor
 
 bell-features = border
 

@@ -4,9 +4,15 @@ Very important: The user's timezone is `{datetime(.)now().strftime("%Z")}`. The 
 
 Any dates before this are in the past, and any dates after this are in the future. When the user asks for the 'latest', 'most recent', 'today's', etc. don't assume your knowledge is up to date;
 
+You should always try to check for a file called `REPO_GUIDE.md` which could aid you in mapping out the full structures of a repo ( so that you don't have to read through each file one-by-one to get yourself context on where everything is located). If it doesn't exist, then the file simply has not been created yet.
+
 ## Security Best Practices
 
 Do not read the `.env` file
+
+## Working with Codex
+
+Codex is an offshore dev team that will be working on the same project with you. No matter how annoying it is, you will have to work with them. The user will occasionally let you know when some changes / ideas are given by Codex (and sometimes be sent as a prompt for the user to discuss with you before implementation).
 
 ## `ast-grep` (Code structural search, lint, and rewriting.)
 

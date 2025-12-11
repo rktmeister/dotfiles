@@ -28,6 +28,7 @@ export PATH=/home/definevera/.opencode/bin:$PATH
 
 # Prepend all custom paths to the system PATH for priority
 export PATH="$BUN_INSTALL/bin:$PATH"
+export PATH="$HOME/.npm-global/bin:$PATH"
 export PATH="$HOME/.koyeb/bin:$PATH"
 export PATH="$HOME/.pixi/bin:$PATH"
 export PATH="$HOME/.local/bin:$PATH"
@@ -123,7 +124,21 @@ zsh-defer -c 'eval "$(oh-my-posh init zsh --config $HOME/.config/ohmyposh/dylan.
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 if [ -z "$DISABLE_ZOXIDE" ]; then
-  eval "$(zoxide init --cmd cd zsh)"
+  eval "$(zoxide init zsh)"
+fi
+
+# Custom CD with Icon and Zoxide fallback
+if command -v zoxide &> /dev/null; then
+  zd() {
+    if [ $# -eq 0 ]; then
+      builtin cd ~ && return
+    elif [ -d "$1" ]; then
+      builtin cd "$1"
+    else
+      z "$@" && printf "\U000F17A9 " && pwd || echo "Error: Directory not found"
+    fi
+  }
+  alias cd="zd"
 fi
 
 #-------------------------------------------------------------------------------
@@ -161,8 +176,8 @@ bindkey '^[w' kill-region
 #-------------------------------------------------------------------------------
 
 # General Aliases
-alias l='eza'
-alias ll='eza -alh'
+alias l='ls --color=auto'
+alias ll='ls -alh --color=auto'
 alias vim='nvim'
 alias c='clear'
 alias s='ssh_connect'
@@ -182,9 +197,12 @@ alias startros='source /opt/ros/kilted/setup.zsh'
 alias upgrade='sudo apt update && sudo apt upgrade -y; flatpak update; sudo snap refresh; oh-my-posh upgrade'
 alias gearlever='flatpak run it.mijorus.gearlever'
 alias codex-yolo='codex --yolo'
+alias spotify='spotify_player'
 alias ts='tmux new -s'
 alias ta='tmux attach -t'
 alias tl='tmux list-session'
+alias tk='tmux kill-session -t'
+alias cxusage='ccusage-codex'
 
 # Docker Aliases
 alias dcup='docker compose up'
@@ -472,3 +490,6 @@ function y() {
 export PATH="$PATH:/home/definevera/.lmstudio/bin"
 # End of LM Studio CLI section
 
+
+# bun completions
+[ -s "/home/definevera/.bun/_bun" ] && source "/home/definevera/.bun/_bun"

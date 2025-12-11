@@ -1,6 +1,24 @@
 {
-  "theme": "Ayu",
-  "selectedAuthType": "gemini-api-key",
-  "contextFileName": "AGENTS.md",
-  "preferredEditor": "neovim"
+  "context": {
+    "fileName": "AGENTS.md"
+  },
+  "general": {
+    "preferredEditor": "neovim",
+    "previewFeatures": true,
+    "vimMode": false
+  },
+  "security": {
+    "auth": {
+      "selectedType": "gemini-api-key"
+    }
+  },
+  "ui": {
+    "theme": "Dracula"
+  },
+  "experimental": {
+    "useModelRouter": false
+  },
+  "tools": {
+    "enableToolOutputTruncation": false
+  }
 }
