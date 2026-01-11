@@ -27,6 +27,7 @@ esac
 export PATH=/home/definevera/.opencode/bin:$PATH
 
 # Prepend all custom paths to the system PATH for priority
+export PATH="/home/definevera/.amp/bin:$PATH"
 export PATH="$BUN_INSTALL/bin:$PATH"
 export PATH="$HOME/.npm-global/bin:$PATH"
 export PATH="$HOME/.koyeb/bin:$PATH"
@@ -213,14 +214,137 @@ alias dctx='docker context'
 alias dstack='docker stack'
 
 # SSH Multiplexing Aliases
-alias sockets='ls ~/.ssh/sockets'
+sockets() {
+  emulate -L zsh -o err_return -o pipefail -o no_xtrace -o no_verbose
+  setopt no_beep
+
+  local mode="short"
+  local debug=0
+  while (( $# > 0 )); do
+    case "$1" in
+      -d|--debug) debug=1; shift ;;
+      -l|--long) mode="long"; shift ;;
+      -k|--kill) mode="kill"; shift; break ;;
+      -h|--help)
+        print -r -- "Usage: sockets [-l|--long] [-d|--debug]"
+        print -r -- "       sockets -k <alias> [-- ssh_options...]"
+        return 0
+        ;;
+      --) shift; break ;;
+      *) break ;;
+    esac
+  done
+
+  if [[ $mode == "kill" ]]; then
+    local target="${1:-}"
+    if [[ -z $target ]]; then
+      print -r -- "Usage: sockets -k <alias> [-- ssh_options...]"
+      return 2
+    fi
+    shift
+    if (( $# > 0 )) && [[ $1 == "--" ]]; then
+      shift
+    fi
+    if (( $# > 0 )); then
+      ssh_connect stop "$target" -- "$@"
+    else
+      ssh_connect stop "$target"
+    fi
+    return $?
+  fi
+
+  local sock_dir="${SSH_SOCKET_DIR:-$HOME/.ssh/sockets}"
+  local config="${SSH_CONFIG:-$HOME/.ssh/config}"
+
+  if [[ ! -d $sock_dir ]]; then
+    print -r -- "No sockets directory: $sock_dir"
+    return 1
+  fi
+
+  local -a socket_paths
+  socket_paths=($sock_dir/*(N))
+  if (( debug )); then
+    print -r -- "sock_dir=$sock_dir"
+    print -r -- "socket_paths=${(qqq)socket_paths}"
+    print -r -- "xtrace=${options[xtrace]} verbose=${options[verbose]}"
+  fi
+  if (( ${#socket_paths[@]} == 0 )); then
+    print -r -- "No active sockets in $sock_dir"
+    return 0
+  fi
+
+  local -A cp_to_aliases cp_to_ssh_target cp_base_to_aliases cp_base_to_ssh_target
+  if [[ -f $config ]]; then
+    local -a hosts
+    hosts=("${(@f)$(awk '
+      tolower($1)=="host" {
+        for (i=2; i<=NF; i++) {
+          if ($i !~ /[*?]/ && $i !~ /^!/ && $i !~ /\[/) print $i
+        }
+      }' "$config")}")
+
+    local host cfg cp cp_base host_user host_hostname host_port host_target
+    for host in $hosts; do
+      cfg=$(ssh -G "$host" 2>/dev/null) || continue
+      cp=$(awk '$1=="controlpath"{print $2; exit}' <<<"$cfg")
+      [[ -n $cp && $cp != "none" ]] || continue
+      cp_base="${cp:t}"
+      host_user=$(awk '$1=="user"{print $2; exit}' <<<"$cfg")
+      host_hostname=$(awk '$1=="hostname"{print $2; exit}' <<<"$cfg")
+      host_port=$(awk '$1=="port"{print $2; exit}' <<<"$cfg")
+      host_target="${host_user}@${host_hostname}:${host_port}"
+      cp_to_aliases[$cp]="${cp_to_aliases[$cp]:+${cp_to_aliases[$cp]}, }$host"
+      cp_to_ssh_target[$cp]="$host_target"
+      cp_base_to_aliases[$cp_base]="${cp_base_to_aliases[$cp_base]:+${cp_base_to_aliases[$cp_base]}, }$host"
+      cp_base_to_ssh_target[$cp_base]="$host_target"
+    done
+  fi
+
+  if [[ $mode == "long" ]]; then
+    printf "%-20s %-30s %s\n" "ALIAS" "TARGET" "SOCKET"
+  fi
+
+  local socket socket_abs socket_base alias socket_target
+  for socket in $socket_paths; do
+    socket_abs="${socket:A}"
+    socket_base="${socket:t}"
+    alias="${cp_to_aliases[$socket_abs]}"
+    socket_target="${cp_to_ssh_target[$socket_abs]}"
+    [[ -n $alias ]] || alias="${cp_to_aliases[$socket]}"
+    [[ -n $alias ]] || alias="${cp_base_to_aliases[$socket_base]}"
+    [[ -n $socket_target ]] || socket_target="${cp_to_ssh_target[$socket]}"
+    [[ -n $socket_target ]] || socket_target="${cp_base_to_ssh_target[$socket_base]}"
+    if [[ -z $socket_target && $socket_base == target=* ]]; then
+      local maybe="${socket_base#target=}"
+      if [[ $maybe =~ ^[^@]+@[^:]+:[0-9]+$ ]]; then
+        socket_target="$maybe"
+      fi
+    fi
+
+    if (( debug )); then
+      print -r -- "loop socket_base=$socket_base alias=${alias:-<none>} target=${socket_target:-<none>}"
+    fi
+
+    if [[ $mode == "long" ]]; then
+      if [[ -n $alias ]]; then
+        printf "%-20s %-30s %s\n" "$alias" "$socket_target" "$socket_base"
+      else
+        printf "%-20s %-30s %s\n" "-" "-" "$socket_base"
+      fi
+    else
+      if [[ -n $alias ]]; then
+        printf "%-20s %s\n" "$alias" "$socket_base"
+      else
+        print -r -- "$socket_base"
+      fi
+    fi
+  done
+}
 
 # Claude CLI Config
 export ENABLE_BACKGROUND_TASKS=1
 export CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1
 export DISABLE_TELEMETRY=1
-alias qlaude='API_TIMEOUT_MS=600000 ANTHROPIC_BASE_URL=http://localhost:4000 ANTHROPIC_MODEL=openrouter/qwen/qwen3-coder ANTHROPIC_SMALL_FAST_MODEL=openrouter/qwen/qwen3-coder claude --dangerously-skip-permissions'
-alias klaude='export ANTHROPIC_BASE_URL=https://api.moonshot.ai/anthropic claude --dangerously-skip-permissions'
 
 # EDITOR
 export EDITOR=nvim
@@ -363,120 +487,7 @@ compdef _vpn_complete vpn
 
 
 # SSH connection manager
-ssh_connect() {
-  setopt extended_glob
-  if [[ $# -lt 1 ]]; then
-    echo "Usage: ssh_connect [connect|start|stop|status] <server_alias> [ports...] [-- ssh_options...]"
-    echo "Example: ssh_connect start my-server 8080 9000-9010 -- -i ~/.ssh/id_rsa -p 2222"
-    return 1
-  fi
-
-  local command=$1
-  local server=$2
-
-  # Handle implicit 'connect' command
-  if [[ "$command" != "connect" && "$command" != "start" && "$command" != "stop" && "$command" != "status" ]]; then
-    server=$1
-    command="connect"
-    shift
-  else
-    shift 2
-  fi
-
-  # --- MODIFICATION START ---
-  # Separate port arguments from pass-through ssh options
-  local port_args=()
-  local ssh_opts=()
-  while (( $# > 0 )); do
-    if [[ "$1" == "--" ]]; then
-      shift # Consume the '--'
-      ssh_opts=("$@") # The rest of the arguments are for ssh
-      break
-    fi
-    port_args+=("$1")
-    shift
-  done
-  # --- MODIFICATION END ---
-
-  case "$command" in
-    stop)
-      echo "Stopping SSH master connection and tunnels for $server..."
-      # Pass through ssh options
-      ssh -O exit "${ssh_opts[@]}" "$server"
-      ;;
-    status)
-      echo "Checking status of SSH master connection for $server..."
-      # Pass through ssh options
-      ssh -O check "${ssh_opts[@]}" "$server"
-      ;;
-    start|connect)
-      local forward_args=()
-      local ports_display=()
-      # --- MODIFICATION START ---
-      # Loop over the collected port_args instead of the original $@
-      for arg in "${port_args[@]}"; do
-        if [[ $arg =~ ^([0-9]+)-([0-9]+)$ ]]; then
-          local start=${match[1]} end=${match[2]}
-          if (( start >= 1024 && end <= 49151 && start <= end )); then
-            for port in $(seq $start $end); do
-              forward_args+=("-L" "$port:127.0.0.1:$port")
-              ports_display+=("$port")
-            done
-          else echo "Warning: Invalid port range: $arg"
-          fi
-        elif [[ $arg =~ ^([0-9]+):([0-9]+)$ ]]; then
-          local local_port=${match[1]} remote_port=${match[2]}
-          if (( local_port >= 1024 && local_port <= 49151 && remote_port >= 1024 && remote_port <= 49151 )); then
-            forward_args+=("-L" "$local_port:127.0.0.1:$remote_port")
-            ports_display+=("$local_port→$remote_port")
-          else echo "Warning: Invalid port mapping: $arg"
-          fi
-        elif [[ $arg =~ ^[0-9]+$ ]]; then
-          if (( $arg >= 1024 && $arg <= 49151 )); then
-            forward_args+=("-L" "$arg:127.0.0.1:$arg")
-            ports_display+=("$arg")
-          else echo "Warning: Invalid port number: $arg"
-          fi
-        else echo "Warning: Invalid format: $arg"
-        fi
-      done
-      # --- MODIFICATION END ---
-
-      if (( ${#forward_args[@]} > 0 )); then
-        echo "Checking for existing master connection..."
-        # Pass through ssh options
-        if ssh -O check "${ssh_opts[@]}" "$server" &>/dev/null; then
-          echo "Warning: Master connection already exists for $server."
-          echo "Tunnels cannot be added to a running connection."
-          echo "To apply new tunnels, run 'ssh_connect stop $server' first."
-        else
-          echo "Establishing new background master connection for $server..."
-          if (( ${#ports_display[@]} > 0 )); then
-            echo "Forwarding ports: ${ports_display[@]}"
-          fi
-          # Pass through ssh options here as well
-          ssh -f -N -o ExitOnForwardFailure=yes "${forward_args[@]}" "${ssh_opts[@]}" "$server"
-          if [[ $? -eq 0 ]]; then
-            echo "Tunnels successfully established in the background."
-          else
-            echo "Error: Failed to establish tunnels. A port might be in use or the server is unreachable."
-            return 1
-          fi
-        fi
-      fi
-
-      if [[ "$command" == "connect" ]]; then
-        echo "Opening interactive shell to $server..."
-        # And finally, pass through ssh options to the interactive shell
-        ssh "${ssh_opts[@]}" "$server"
-      fi
-      ;;
-    *)
-      echo "Error: Unknown command '$command'"
-      return 1
-      ;;
-  esac
-}
+[[ -f "$HOME/.zsh/ssh_connect.zsh" ]] && source "$HOME/.zsh/ssh_connect.zsh"
 
 function y() {
 	local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd

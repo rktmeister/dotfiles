@@ -1,16 +1,14 @@
-"$schema" = "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json"
 console_title_template = '{{ .Shell }} in {{ .Folder }}'
-version = 3
+version = 4
 final_space = true
 
 [secondary_prompt]
-  # template = '󱞩  '
-  template=' '
+  template = ' '
   foreground = 'magenta'
   background = 'transparent'
 
 [transient_prompt]
-  template= '󰁔  '
+  template = '󰁔  '
   background = 'transparent'
   foreground_templates = ['{{if gt .Code 0}}red{{end}}', '{{if eq .Code 0}}magenta{{end}}']
 
@@ -26,20 +24,12 @@ final_space = true
     type = 'path'
     style = 'plain'
 
-    [blocks.segments.properties]
-      style = 'full'
-
   [[blocks.segments]]
     template = ' {{ .HEAD }}{{ if or (.Working.Changed) (.Staging.Changed) }}*{{ end }} <cyan>{{ if gt .Behind 0 }}⇣{{ end }}{{ if gt .Ahead 0 }}⇡{{ end }}</>'
     foreground = 'p:grey'
     background = 'transparent'
     type = 'git'
     style = 'plain'
-
-    [blocks.segments.properties]
-      branch_icon = ''
-      commit_icon = '@'
-      fetch_status = true
 
 [[blocks]]
   type = 'rprompt'
@@ -59,9 +49,6 @@ final_space = true
     type = 'executiontime'
     style = 'plain'
 
-    [blocks.segments.properties]
-      threshold = 5000
-
   [[blocks.segments]]
     leading_diamond = ''
     trailing_diamond = ''
@@ -78,7 +65,6 @@ final_space = true
 
   [[blocks.segments]]
     template = '󰁔 '
-    # template=' '
     background = 'transparent'
     type = 'text'
     style = 'plain'

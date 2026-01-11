@@ -23,3 +23,19 @@ _darcs
 ^/COPYING
 
 .+\.css
+
+conversations
+node_modules
+
+# Agent harnesses are managed via ~/agent-scripts symlinks (see agent-scripts README)
+\.codex/prompts
+\.codex/skills
+\.codex/AGENTS\.md
+\.codex/AGENTS\.md\.bak.*
+\.claude/skills
+
+# File specific
+.zshrc.bak
+gemini_code_review_prompt.md
+thunderbird-userContent.css
+twitter-show-more-expander.js

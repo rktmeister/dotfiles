@@ -1,0 +1,8 @@
+filter_class: "com.mitchellh.ghostty"
+disable_x11_fast_inject: true
+backend: clipboard
+paste_shortcut: CTRL+SHIFT+V
+# Optional if you still see missed chars:
+# inject_delay: 10
+# key_delay: 10
+
