@@ -1,0 +1,107 @@
+#!/bin/sh
+# Copy stdin to a "best available" clipboard mechanism.
+#
+# Priority order:
+# - Wayland: wl-copy (clipboard) + wl-copy -p (primary, if supported)
+# - X11: xclip/xsel (clipboard + primary)
+# - macOS: pbcopy
+# - Fallback: OSC52 via tmux (remote-friendly)
+#
+# Notes:
+# - This script is designed to be called from tmux copy-mode via copy-pipe.
+# - It always exits 0 so copying never feels "broken" even if no backend works.
+
+set -eu
+
+tmp=${TMPDIR:-/tmp}/tmux-clipboard.$$.txt
+trap 'rm -f "$tmp"' EXIT HUP INT TERM
+
+cat >"$tmp"
+
+try_wayland() {
+    [ -n "${WAYLAND_DISPLAY-}" ] || return 1
+    command -v wl-copy >/dev/null 2>&1 || return 1
+
+    # wl-copy forks by default (keeps clipboard ownership), so this should return quickly.
+    wl-copy <"$tmp" >/dev/null 2>&1 || return 1
+
+    # PRIMARY selection is optional on Wayland; attempt it if wl-copy supports it.
+    if wl-copy --help 2>/dev/null | grep -E -q '(^|[[:space:]])(-p|--primary)([[:space:]]|$)'; then
+        wl-copy -p <"$tmp" >/dev/null 2>&1 || true
+    fi
+
+    return 0
+}
+
+try_xclip() {
+    [ -n "${DISPLAY-}" ] || return 1
+    command -v xclip >/dev/null 2>&1 || return 1
+
+    xclip -in -selection clipboard <"$tmp" >/dev/null 2>&1 || return 1
+    xclip -in -selection primary <"$tmp" >/dev/null 2>&1 || true
+    return 0
+}
+
+try_xsel() {
+    [ -n "${DISPLAY-}" ] || return 1
+    command -v xsel >/dev/null 2>&1 || return 1
+
+    xsel -ib <"$tmp" >/dev/null 2>&1 || return 1
+    xsel -ip <"$tmp" >/dev/null 2>&1 || true
+    return 0
+}
+
+try_pbcopy() {
+    command -v pbcopy >/dev/null 2>&1 || return 1
+    pbcopy <"$tmp" >/dev/null 2>&1 || return 1
+    return 0
+}
+
+try_tmux_osc52() {
+    command -v tmux >/dev/null 2>&1 || return 1
+
+    sock=
+    if [ -n "${TMUX-}" ]; then
+        sock=${TMUX%%,*}
+    fi
+
+    # Prefer targeting the triggering client so the OSC52 goes to the right terminal.
+    if [ -n "$sock" ]; then
+        client=$(tmux -S "$sock" display-message -p "#{client_name}" 2>/dev/null || true)
+        if [ -n "$client" ]; then
+            tmux -S "$sock" load-buffer -w -b clipboard -t "$client" - <"$tmp" >/dev/null 2>&1
+            return 0
+        fi
+
+        tmux -S "$sock" load-buffer -w -b clipboard - <"$tmp" >/dev/null 2>&1
+        return 0
+    fi
+
+    client=$(tmux display-message -p "#{client_name}" 2>/dev/null || true)
+    if [ -n "$client" ]; then
+        tmux load-buffer -w -b clipboard -t "$client" - <"$tmp" >/dev/null 2>&1
+        return 0
+    fi
+
+    tmux load-buffer -w -b clipboard - <"$tmp" >/dev/null 2>&1
+    return 0
+}
+
+if try_wayland; then
+    exit 0
+fi
+
+if try_xclip; then
+    exit 0
+fi
+
+if try_xsel; then
+    exit 0
+fi
+
+if try_pbcopy; then
+    exit 0
+fi
+
+try_tmux_osc52 || true
+exit 0

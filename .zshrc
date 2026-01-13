@@ -381,5 +381,4 @@ export PATH="$PATH:/home/definevera/.lmstudio/bin"
 # End of LM Studio CLI section
 
 
-# bun completions
-[ -s "/home/definevera/.bun/_bun" ] && source "/home/definevera/.bun/_bun"
+# bun completions live in ~/.zsh/completions

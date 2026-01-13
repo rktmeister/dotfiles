@@ -9,33 +9,33 @@
             "args": [],
             "projects": [
                 {
-                    "paths": ["/home/dylan/Projects/EL-Bangladesh"]
+                    "paths": ["/home/dylan/Projects/EL-Bangladesh"],
                 },
                 {
-                    "paths": ["/home/dylan/Projects/IDXLens"]
+                    "paths": ["/home/dylan/Projects/IDXLens"],
                 },
                 {
-                    "paths": ["/home/dylan/RA/harmful_moderation"]
+                    "paths": ["/home/dylan/RA/harmful_moderation"],
                 },
                 {
-                    "paths": ["/home/nevera/Projects/erp-service"]
-                }
-            ]
+                    "paths": ["/home/nevera/Projects/erp-service"],
+                },
+            ],
         },
         {
             "host": "prod",
             "args": [],
-            "projects": []
-        }
+            "projects": [],
+        },
     ],
     "edit_predictions": {
         "mode": "subtle",
         "copilot": {
             "proxy": null,
             "proxy_no_verify": null,
-            "enterprise_uri": null
+            "enterprise_uri": null,
         },
-        "enabled_in_text_threads": false
+        "enabled_in_text_threads": false,
     },
     "agent": {
         "use_modifier_to_send": true,
@@ -44,25 +44,25 @@
         "default_profile": "write",
         "default_model": {
             "provider": "google",
-            "model": "gemini-2.5-pro"
-        }
+            "model": "gemini-2.5-pro",
+        },
     },
     "features": {
-        "edit_prediction_provider": "zed"
+        "edit_prediction_provider": "zed",
     },
     "telemetry": {
         "diagnostics": true,
-        "metrics": false
+        "metrics": false,
     },
     "icon_theme": "Zed (Default)",
     "vim_mode": true,
     "ui_font_size": 14.0,
     "buffer_font_size": 13.0,
-    "buffer_font_family": "JetBrainsMono Nerd Font Mono",
+    "buffer_font_family": "Berkeley Mono",
     "theme": {
         "mode": "system",
         "light": "Gruvbox Dark Hard",
-        "dark": "Gruvbox Dark Hard"
+        "dark": "Gruvbox Dark Hard",
     },
     "tab_size": 4,
     "preferred_line_length": 88,
@@ -75,25 +75,25 @@
             "formatter": [
                 {
                     "language_server": {
-                        "name": "ruff"
-                    }
-                }
+                        "name": "ruff",
+                    },
+                },
             ],
             "tab_size": 4,
-            "preferred_line_length": 88
+            "preferred_line_length": 88,
         },
         "TypeScript": {
             "language_servers": ["!typescript-language-server", "vtsls"],
             "format_on_save": "on",
             "tab_size": 2,
-            "preferred_line_length": 100
+            "preferred_line_length": 100,
         },
         "TSX": {
             "language_servers": ["!typescript-language-server", "vtsls"],
             "format_on_save": "on",
             "tab_size": 2,
-            "preferred_line_length": 100
-        }
+            "preferred_line_length": 100,
+        },
     },
     "lsp": {
         "ruff": {
@@ -111,48 +111,48 @@
                             "B",
                             "C4",
                             "PIE",
-                            "SIM"
+                            "SIM",
                         ],
-                        "ignore": []
+                        "ignore": [],
                     },
                     "format": {
                         "quote-style": "double",
-                        "indent-style": "space"
-                    }
-                }
-            }
+                        "indent-style": "space",
+                    },
+                },
+            },
         },
         "ty": {
             "binary": {
                 "path": "ty",
-                "arguments": ["server"]
-            }
+                "arguments": ["server"],
+            },
         },
         "vtsls": {
             "settings": {
                 "typescript": {
                     "tsserver": {
-                        "maxTsServerMemory": 4096
+                        "maxTsServerMemory": 4096,
                     },
                     "inlayHints": {
                         "parameterNames": "all",
-                        "functionLikeReturnTypes": true
-                    }
-                }
-            }
-        }
+                        "functionLikeReturnTypes": true,
+                    },
+                },
+            },
+        },
     },
     "terminal": {
-        "font_family": "JetBrainsMono Nerd Font",
+        "font_family": "JetBrainsMono Nerd Font Mono",
         "shell": {
-            "program": "/bin/zsh"
+            "program": "/bin/zsh",
         },
         "env": {
-            "UV_TOOL_DIR": "$HOME/.local/share/uv/tools"
-        }
+            "UV_TOOL_DIR": "$HOME/.local/share/uv/tools",
+        },
     },
     "file_types": {
         "pyproject.toml": ["TOML"],
-        "uv.lock": ["TOML"]
-    }
+        "uv.lock": ["TOML"],
+    },
 }

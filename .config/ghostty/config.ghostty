@@ -40,5 +40,7 @@ keybind = alt+l=goto_split:right
 keybind = alt+\=new_split:right
 keybind = alt+-=new_split:down
 
-keybind = shift+enter=text:\x1b\r
+# keybind = shift+enter=text:\x1b\r
+keybind = shift+enter=text:\n
+keybind = alt+backspace=text:\x1b\x7f
 

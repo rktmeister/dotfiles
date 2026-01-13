@@ -10,10 +10,8 @@ vpn() {
   local ZSCALER_TUNNEL="${ZSCALER_TUNNEL:-zstunnel}"
 
   # Lazy binary discovery
-  local TS TLSD RESOLVECTL
+  local TS
   TS=$(command -v tailscale 2>/dev/null || true)
-  TLSD=$(command -v tailscaled 2>/dev/null || true)
-  RESOLVECTL=$(command -v resolvectl 2>/dev/null || true)
 
   # Helpers
   if [[ $EUID -eq 0 ]]; then
@@ -34,6 +32,7 @@ vpn() {
     fi
     _sudo "$TS" up "${flags[@]}"
   }
+
 
   # Snapshot for rollback
   local -a PREV_UNITS=()
@@ -84,6 +83,7 @@ vpn() {
         print -r -- "--> Tailscale already active"
         return 0
       fi
+      [[ -n $TS ]] || { print -r -- "tailscale CLI not found"; return 127; }
       sudo -v || return 1
       trap 'rollback' ZERR
 
