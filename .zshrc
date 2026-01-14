@@ -227,7 +227,7 @@ sockets() {
       -k|--kill) mode="kill"; shift; break ;;
       -h|--help)
         print -r -- "Usage: sockets [-l|--long] [-d|--debug]"
-        print -r -- "       sockets -k <alias> [-- ssh_options...]"
+        print -r -- "       sockets -k <alias...> [-- ssh_options...]"
         return 0
         ;;
       --) shift; break ;;
@@ -236,21 +236,72 @@ sockets() {
   done
 
   if [[ $mode == "kill" ]]; then
-    local target="${1:-}"
-    if [[ -z $target ]]; then
-      print -r -- "Usage: sockets -k <alias> [-- ssh_options...]"
+    local -a raw_targets targets ssh_opts
+
+    # Accept multiple aliases. SSH options can be provided either after "--" or
+    # (for backwards compatibility) starting at the first "-" argument.
+    while (( $# > 0 )); do
+      case "$1" in
+        --)
+          shift
+          ssh_opts=("$@")
+          break
+          ;;
+        -*)
+          ssh_opts=("$@")
+          break
+          ;;
+        *)
+          raw_targets+=("$1")
+          shift
+          ;;
+      esac
+    done
+
+    if (( ${#raw_targets[@]} == 0 )); then
+      print -r -- "Usage: sockets -k <alias...> [-- ssh_options...]"
       return 2
     fi
-    shift
-    if (( $# > 0 )) && [[ $1 == "--" ]]; then
-      shift
+
+    # Also accept comma-separated alias lists (e.g. "foo,bar" or "foo, bar").
+    local -a expanded
+    local item part trimmed
+    for item in "${raw_targets[@]}"; do
+      for part in "${(@s:,:)item}"; do
+        trimmed="${part#"${part%%[![:space:]]*}"}"
+        trimmed="${trimmed%"${trimmed##*[![:space:]]}"}"
+        [[ -n $trimmed ]] && expanded+=("$trimmed")
+      done
+    done
+
+    local -A seen
+    local t
+    for t in "${expanded[@]}"; do
+      [[ -n $t ]] || continue
+      if [[ -z ${seen[$t]} ]]; then
+        seen[$t]=1
+        targets+=("$t")
+      fi
+    done
+
+    if (( ${#targets[@]} == 0 )); then
+      print -r -- "Usage: sockets -k <alias...> [-- ssh_options...]"
+      return 2
     fi
-    if (( $# > 0 )); then
-      ssh_connect stop "$target" -- "$@"
-    else
-      ssh_connect stop "$target"
-    fi
-    return $?
+
+    local rc=0
+    local current_rc
+    for t in "${targets[@]}"; do
+      if (( ${#ssh_opts[@]} > 0 )); then
+        ssh_connect stop "$t" -- "${ssh_opts[@]}"
+        current_rc=$?
+      else
+        ssh_connect stop "$t"
+        current_rc=$?
+      fi
+      (( current_rc == 0 )) || rc=$current_rc
+    done
+    return $rc
   fi
 
   local sock_dir="${SSH_SOCKET_DIR:-$HOME/.ssh/sockets}"
